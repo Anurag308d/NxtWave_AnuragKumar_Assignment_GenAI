@@ -64,7 +64,9 @@ def test_full_loop_terminates_and_ships(tmp_path, mode):
 
 def test_memory_learns_rule_after_repeated_failures(tmp_path):
     mem = Memory(tmp_path / "m.db")
-    for _ in range(2):
+    build_graph(mock_llm.MockLLM(), mem).invoke(new_run_state("Introduction to RAG"), {"recursion_limit": 50})
+    assert not mem.active_rules(), "one run alone must not create rules"
+    for _ in range(1):
         build_graph(mock_llm.MockLLM(), mem).invoke(new_run_state("Introduction to RAG"), {"recursion_limit": 50})
     assert mem.active_rules(), "a rule should be distilled after the same check failed twice"
 
@@ -73,3 +75,54 @@ def test_injected_failures_do_not_teach_memory(tmp_path):
     mem = Memory(tmp_path / "m.db")
     build_graph(mock_llm.MockLLM(), mem).invoke(new_run_state("Introduction to RAG", "factual"), {"recursion_limit": 50})
     assert "J1" not in mem.failure_counts()
+
+
+def test_unicode_hyphen_acronym_is_not_a_false_failure():
+    # regression: a real run failed D6 on "Coronavirus Disease 2019 (COVID\u201119)"
+    md = GOOD.replace("## A Full Example", "Coronavirus Disease 2019 (COVID\u201119) rules changed.\n\n## A Full Example")
+    assert by_id(run_deterministic(md))["D6"].passed
+
+
+def test_unexpanded_acronym_still_fails():
+    md = GOOD.replace("## A Full Example", "The latest COVID\u201119 rules changed.\n\n## A Full Example")
+    assert not by_id(run_deterministic(md))["D6"].passed
+
+
+def test_degenerate_output_detected():
+    from lesson_agent.rubric import looks_degenerate
+    assert looks_degenerate(GOOD) is None
+    salad = "# T\n\n## What Is RAG?\n\n" + " ".join(f"**w{i}**" for i in range(400))
+    assert looks_degenerate(salad)
+    loop = GOOD + "\n## A full example\nx\n## A full example\ny\n## A full example\nz\n"
+    assert looks_degenerate(loop)
+
+
+def test_duplicate_headings_fail_d1():
+    md = GOOD.replace("## Quick Recap", "## A Full Example\nagain\n\n## Quick Recap")
+    assert not by_id(run_deterministic(md))["D1"].passed
+
+
+def test_j4_fail_overturned_when_terms_defined_inline():
+    from lesson_agent.evaluator import _verify_flow_fail
+    from lesson_agent.rubric import CheckResult
+    r = CheckResult("J4", "flow", "flow", "llm", False, "used before definition",
+                    ['"saved in a **vector database** (a special storage that can match numbers)." (vector database used before definition)',
+                     '"It lowers the chance of hallucination - when the model makes up facts - because it has real text."'])
+    assert _verify_flow_fail(r, "").passed
+
+
+def test_j4_real_flow_fail_is_kept():
+    from lesson_agent.evaluator import _verify_flow_fail
+    from lesson_agent.rubric import CheckResult
+    r = CheckResult("J4", "flow", "flow", "llm", False, "used before definition",
+                    ['"The retriever sends embeddings to the vector store."'])
+    assert not _verify_flow_fail(r, "").passed
+
+
+def test_retired_rule_is_not_relearned_immediately(tmp_path):
+    mem = Memory(tmp_path / "m.db")
+    for _ in range(2):
+        build_graph(mock_llm.MockLLM(), mem).invoke(new_run_state("Introduction to RAG"), {"recursion_limit": 50})
+    for r in mem.active_rules():
+        mem.set_rule_active(r["id"], False)
+    assert mem.checks_needing_rules() == [], "old failures must not resurrect a rule a human retired"

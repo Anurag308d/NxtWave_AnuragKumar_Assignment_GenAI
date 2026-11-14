@@ -5,8 +5,10 @@
   python main.py run --topic "..."            # any topic (grounded only if sources/<slug>.md exists)
   python main.py feedback D5 "Always define 'query' in Key Words"   # human feedback -> memory rule
   python main.py memory                       # show what the system has learned so far
+  python main.py rules [--disable ID]          # list learned rules; retire a stale/harmful one
   python main.py reset-memory
   python main.py graph                        # print the workflow graph (mermaid)
+  python main.py models                       # list Groq models your key can use + the auto-selected pair
   add --mock to `run` to test everything offline without an API key
 """
 from __future__ import annotations
@@ -33,7 +35,7 @@ def cmd_run(a):
     mem = Memory(a.memory_db) if a.memory_db else Memory()
     graph = build_graph(llm, mem)
     console.rule(f"[bold]Lesson agent: {a.topic}")
-    console.print(f"generator={config.GENERATOR_MODEL}  evaluator={config.EVALUATOR_MODEL}  "
+    console.print(f"generator={config.GENERATOR_MODEL}  judge={config.EVALUATOR_MODEL}  learner={config.LEARNER_MODEL}  "
                   f"max_retries={config.MAX_RETRIES}  inject={a.inject or 'off'}  mock={a.mock}")
     state = graph.invoke(new_run_state(a.topic, a.inject), {"recursion_limit": 50})
     out = write_outputs(state)
@@ -67,6 +69,22 @@ def cmd_feedback(a):
     return 0
 
 
+def cmd_rules(a):
+    mem = Memory()
+    if a.disable is not None or a.enable is not None:
+        rid, on = (a.disable, False) if a.disable is not None else (a.enable, True)
+        ok = mem.set_rule_active(rid, on)
+        console.print(f"Rule #{rid} {'enabled' if on else 'disabled'}." if ok else f"[red]No rule #{rid}.")
+    t = Table(title="Learned rules (the self-evolving part of the writer prompt)")
+    for c in ("id", "check", "source", "ver", "active", "applied", "fails since", "rule"):
+        t.add_column(c)
+    for r in mem.all_rules():
+        t.add_row(str(r["id"]), r["check_id"], r["source"], str(r["version"]), "yes" if r["active"] else "no",
+                  str(r["times_applied"]), str(r["fails_since_created"]), r["rule"])
+    console.print(t)
+    return 0
+
+
 def cmd_memory(a):
     s = Memory().stats()
     t = Table(title="Runs")
@@ -85,6 +103,18 @@ def cmd_memory(a):
     console.print(t2)
     if a.json:
         print(json.dumps(s, indent=2, default=str))
+    return 0
+
+
+def cmd_models(a):
+    from lesson_agent.llm import GroqLLM
+    llm = GroqLLM()
+    console.print("Chat models available on your Groq key:")
+    for m in llm.available_models():
+        console.print(f"  - {m}")
+    console.print(f"Selected -> generator: {config.GENERATOR_MODEL} | judge: {config.EVALUATOR_MODEL} | "
+                  f"learner: {config.LEARNER_MODEL} | "
+                  f"fallback: {config.FALLBACK_MODEL}")
     return 0
 
 
@@ -107,11 +137,16 @@ def main(argv=None):
     f.add_argument("check_id")
     f.add_argument("rule")
     f.set_defaults(fn=cmd_feedback)
+    ru = sub.add_parser("rules", help="list learned rules; --disable/--enable ID to retire or restore one")
+    ru.add_argument("--disable", type=int)
+    ru.add_argument("--enable", type=int)
+    ru.set_defaults(fn=cmd_rules)
     m = sub.add_parser("memory")
     m.add_argument("--json", action="store_true")
     m.set_defaults(fn=cmd_memory)
     sub.add_parser("reset-memory").set_defaults(fn=lambda a: (Memory().reset(), console.print("memory cleared"), 0)[2])
     sub.add_parser("graph").set_defaults(fn=cmd_graph)
+    sub.add_parser("models").set_defaults(fn=cmd_models)
     a = p.parse_args(argv)
     return a.fn(a)
 

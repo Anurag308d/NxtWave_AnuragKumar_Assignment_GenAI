@@ -1,0 +1,960 @@
+{
+  "run_id": "20261113-143944-abcc",
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+  "inject_mode": null,
+  "status": "human_review",
+  "plan": {
+    "title": "Intro to Retrieval-Augmented Generation (RAG)",
+    "analogy": "Like a student who first looks up the right chapter in a book and then asks the teacher a question, RAG first finds useful information and then asks the AI to answer.",
+    "running_example": "A student asks, \"What are the latest COVID-19 guidelines in India?\" The documents are a Ministry of Health PDF, a WHO guideline PDF, and a recent news article.",
+    "sections": [
+      {
+        "title": "Before We Start",
+        "goal": "Learn what RAG is and why it matters for an AI career.",
+        "points": [
+          "RAG helps AI answer questions using fresh data.",
+          "It lets you build smart apps without training new models.",
+          "It is a key skill for AI jobs today."
+        ]
+      },
+      {
+        "title": "What Is RAG?",
+        "goal": "Understand the basic idea of RAG.",
+        "points": [
+          "RAG means Retrieval-Augmented Generation.",
+          "It first finds relevant text and then uses it to generate an answer.",
+          "Think of it as looking up a page before asking a question."
+        ]
+      },
+      {
+        "title": "Why Does It Matter?",
+        "goal": "Know the problems RAG solves and its benefits.",
+        "points": [
+          "LLMs have a fixed knowledge cut‑off and may not know new facts.",
+          "They can make up (hallucinate) wrong answers.",
+          "RAG gives up‑to‑date, private, and sourced answers."
+        ]
+      },
+      {
+        "title": "How Does It Work?",
+        "goal": "See the steps of RAG with the running example.",
+        "points": [
+          "1. Indexing: split documents into small chunks, create embeddings, store in a vector database.",
+          "2. Query: the user question is turned into an embedding.",
+          "3. Retrieval: find chunks most similar to the question.",
+          "4. Prompt: add those chunks to the LLM prompt.",
+          "5. Generation: the LLM produces an answer using the chunks."
+        ]
+      },
+      {
+        "title": "A Full Example",
+        "goal": "Follow a complete RAG flow for the example question.",
+        "points": [
+          "Index the Ministry PDF, WHO PDF, and news article.",
+          "User asks the question about COVID guidelines.",
+          "System retrieves the relevant chunks from each doc.",
+          "Prompt the LLM with the chunks and the question.",
+          "LLM returns a concise, sourced answer."
+        ]
+      },
+      {
+        "title": "Where Is It Used?",
+        "goal": "Learn real applications and a limitation.",
+        "points": [
+          "1. Customer support bots that need company policy documents.",
+          "2. Medical assistants that use latest research papers.",
+          "3. Legal assistants that read court rulings.",
+          "Limitation: RAG can still give wrong answers if the retrieved data is wrong."
+        ]
+      },
+      {
+        "title": "Key Words",
+        "goal": "Know the main terms in simple words.",
+        "points": [
+          "**RAG**: Retrieval-Augmented Generation – a method that fetches info before answering.",
+          "**LLM**: Large Language Model – a big AI that can write text.",
+          "**Embedding**: A numeric representation of text that lets computers compare meaning.",
+          "**Vector database**: A storage that keeps embeddings for fast search.",
+          "**Chunking**: Splitting a document into small parts.",
+          "**Retrieval**: Finding the most similar parts to a question.",
+          "**Hallucination**: When an AI makes up facts.",
+          "**Knowledge cutoff**: The last date the AI was trained on data."
+        ]
+      },
+      {
+        "title": "Quick Recap",
+        "goal": "Remember the main points quickly.",
+        "points": [
+          "RAG fetches data before answering.",
+          "It solves knowledge cut‑off and hallucination.",
+          "Indexing uses chunking, embedding, vector DB.",
+          "Query uses retrieval and LLM generation.",
+          "The model itself is not retrained.",
+          "RAG is used in support, medical, legal, and more.",
+          "It can still give wrong answers if data is wrong."
+        ]
+      },
+      {
+        "title": "Check Yourself",
+        "goal": "Test your understanding.",
+        "points": [
+          "What does RAG stand for? Answer: Retrieval-Augmented Generation.",
+          "Why do LLMs hallucinate? Answer: Because they generate text without checking real data.",
+          "What is the first step in the indexing phase? Answer: Chunking the documents.",
+          "How does the LLM get the right answer? Answer: By using the retrieved chunks in its prompt."
+        ]
+      }
+    ],
+    "terms_to_define": [
+      "RAG",
+      "LLM",
+      "embedding",
+      "vector database",
+      "chunking",
+      "retrieval",
+      "hallucination",
+      "knowledge cutoff"
+    ]
+  },
+  "rules": [
+    {
+      "id": 5,
+      "check_id": "J1",
+      "rule": "Never claim the model cannot make things up when the documents lack the answer. Say it may still guess, so good documents and good search matter.",
+      "source": "human",
+      "active": 1,
+      "version": 2,
+      "created_ts": 1794560968.6550863,
+      "times_applied": 0,
+      "fails_since_created": 0
+    },
+    {
+      "id": 4,
+      "check_id": "J1",
+      "rule": "Accurately define LLM as Large Language Model, avoid claiming RAG fully eliminates hallucinations, and do not introduce undefined acronyms like LTM.",
+      "source": "auto",
+      "active": 1,
+      "version": 1,
+      "created_ts": 1794560847.164054,
+      "times_applied": 0,
+      "fails_since_created": 0
+    },
+    {
+      "id": 3,
+      "check_id": "D8",
+      "rule": "Ensure the lesson contains at least 900 words by expanding each section with examples and explanations.",
+      "source": "auto",
+      "active": 1,
+      "version": 1,
+      "created_ts": 1794560574.0582218,
+      "times_applied": 1,
+      "fails_since_created": 0
+    },
+    {
+      "id": 2,
+      "check_id": "D6",
+      "rule": "When first using any acronym, write its full term followed by the abbreviation in parentheses.",
+      "source": "auto",
+      "active": 1,
+      "version": 1,
+      "created_ts": 1794560572.9809396,
+      "times_applied": 1,
+      "fails_since_created": 1
+    },
+    {
+      "id": 1,
+      "check_id": "D5",
+      "rule": "Include every technical term used in the lesson in the Key Words section, providing a concise definition for each.",
+      "source": "auto",
+      "active": 1,
+      "version": 1,
+      "created_ts": 1794560572.1808887,
+      "times_applied": 1,
+      "fails_since_created": 1
+    }
+  ],
+  "new_rules": [
+    {
+      "check_id": "D1",
+      "rule": "Include a final checklist ensuring each required section appears, using exact headings: What is, Why it matters, How it works, Example, Key Words, Recap, Check Yourself."
+    },
+    {
+      "check_id": "D5",
+      "rule": "Include a \"Key Words\" section listing and defining every technical term used in the lesson."
+    },
+    {
+      "check_id": "D6",
+      "rule": "When first using any acronym, write its full form followed by the abbreviation in parentheses."
+    },
+    {
+      "check_id": "D7",
+      "rule": "Include an \"Example\" section containing at least two distinct examples or analogies that illustrate the concept."
+    },
+    {
+      "check_id": "D9",
+      "rule": "Include a self‑check quiz with at least three distinct questions, each followed by its correct answer."
+    },
+    {
+      "check_id": "J1",
+      "rule": "Always define LLM as “Large Language Model”, note RAG only reduces hallucination and the model may still guess when retrieval fails."
+    },
+    {
+      "check_id": "J4",
+      "rule": "Introduce each new term before its first use and include only one concise example section to maintain clear, sequential flow."
+    },
+    {
+      "check_id": "J5",
+      "rule": "When introducing technical terms (e.g., LLM, prompt), include a brief plain-language definition in parentheses for non‑English‑medium learners."
+    }
+  ],
+  "events": [
+    "14:39:44 [memory] 5 learned rule(s) loaded for the generator; 4 past failure example(s) loaded for the evaluator",
+    "14:41:04 [plan] 'Intro to Retrieval-Augmented Generation (RAG)' with 9 sections; analogy: Like a student who first looks up the right chapter in a book and then asks the ",
+    "14:41:04 [retrieve] 25 distinct source facts retrieved across 9 sections (BM25)",
+    "14:41:40 [generate] attempt 1: 1159 words",
+    "14:41:50 [evaluate] attempt 1: 11/14 checks passed -> REJECTED (D5, D6, J1)",
+    "14:42:16 [regenerate (retry 1/2)] attempt 2: 425 words",
+    "14:42:52 [evaluate] attempt 2: 5/14 checks passed -> REJECTED (D1, D5, D7, D8, D9, J1, J3, J4, J5)",
+    "14:42:59 [regenerate (retry 2/2)] attempt 3: 1842 words",
+    "14:44:19 [evaluate] attempt 3: 7/14 checks passed -> REJECTED (D1, D5, D6, D9, J1, J2, J4)",
+    "14:44:19 [human_review] retries exhausted; best = attempt 1 -> NOT shipped, flagged for a human",
+    "14:45:01 [learn] 8 new rule(s) learned from repeated failures\n      + (D1) Include a final checklist ensuring each required section appears, using exact headings: What is, Why it matters, How it works, Example, Key Words, Recap, Check Yourself.\n      + (D5) Include a \"Key Words\" section listing and defining every technical term used in the lesson.\n      + (D6) When first using any acronym, write its full form followed by the abbreviation in parentheses.\n      + (D7) Include an \"Example\" section containing at least two distinct examples or analogies that illustrate the concept.\n      + (D9) Include a self‑check quiz with at least three distinct questions, each followed by its correct answer.\n      + (J1) Always define LLM as “Large Language Model”, note RAG only reduces hallucination and the model may still guess when retrieval fails.\n      + (J4) Introduce each new term before its first use and include only one concise example section to maintain clear, sequential flow.\n      + (J5) When introducing technical terms (e.g., LLM, prompt), include a brief plain-language definition in parentheses for non‑English‑medium learners."
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 80.4.",
+          "evidence": [
+            "score=80.4"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 6.6 words; none too long.",
+          "evidence": [
+            "avg=6.6"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Technical terms used but not defined in Key Words: knowledge base, query",
+          "evidence": [
+            "knowledge base",
+            "query"
+          ],
+          "fix": "Add each missing term to Key Words with a one-line simple definition, or remove the term if it is not needed."
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Acronyms never written in full: COVID, LLM, WHO",
+          "evidence": [
+            "COVID",
+            "LLM",
+            "WHO"
+          ],
+          "fix": "Write each acronym in full the first time, e.g. 'Large Language Model (LLM)'."
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 8 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "1159 words.",
+          "evidence": [
+            "words=1159"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 5 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": false,
+          "reason": "The lesson claims the AI never guesses, which is a known misconception about RAG.",
+          "evidence": [
+            "\"The AI reads this. It writes the answer based on the facts. It does not guess.\" (conflicts with M08: RAG does not guarantee the AI never guesses; the model may still hallucinate when retrieval fails)"
+          ],
+          "fix": "Replace the sentence with something like: \"The AI reads the prompt and tries to answer using the provided facts, but if the retrieved chunks are insufficient it may still generate or hallucinate an answer.\""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All required key points K1‑K7 are present in the lesson.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson includes a step‑by‑step running example, an open‑book exam analogy, and uses Indian‑relevant scenarios (hospital, Ministry of Health).",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "Concepts are introduced before they are used and the sections follow a logical progression for a beginner.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": true,
+          "reason": "No blocking confusion (1 minor, 0 unverifiable quote(s) ignored). Learner summary: RAG is like a student who can open a book during an exam. He first finds the right page, then writes the answer using what he read. This helps the AI give correct and recent answers.",
+          "evidence": [
+            "minor: \"We do not change the model’s **weights**.\""
+          ],
+          "fix": ""
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "We do not change the model’s **weights**.",
+            "why": "The word \"weights\" is used without a simple explanation within two sentences; the explanation appears much later in the key words list, so Ravi may not understand what it means.",
+            "severity": "minor"
+          }
+        ],
+        "answers": {
+          "Q1": "RAG stands for Retrieval‑Augmented Generation. It means the AI first finds (retrieves) information and then uses it to create (generate) an answer.",
+          "Q2": "We need RAG because AI models may not know the latest facts and can sometimes make up wrong answers. RAG lets the AI look up up‑to‑date information, so answers are more accurate and safe.",
+          "Q3": "When a user asks a question, the question is turned into numbers, the system searches the stored numbers (vector database) for the most similar pieces of text, adds those pieces to the prompt, and the AI writes an answer using that information."
+        },
+        "ravi_explains_it": "RAG is like a student who can open a book during an exam. He first finds the right page, then writes the answer using what he read. This helps the AI give correct and recent answers.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 1159,
+        "flesch_reading_ease": 80.4,
+        "avg_sentence_words": 6.6
+      },
+      "verdict": "REJECT"
+    },
+    {
+      "attempt": 2,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Missing sections: Why it matters, How it works, Example, Key Words, Recap, Check Yourself",
+          "evidence": [
+            "Why it matters",
+            "How it works",
+            "Example",
+            "Key Words",
+            "Recap",
+            "Check Yourself"
+          ],
+          "fix": "Add the missing sections as '## ' headings in the required order."
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 88.1.",
+          "evidence": [
+            "score=88.1"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 5.7 words; none too long.",
+          "evidence": [
+            "avg=5.7"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "No Key Words section, so no term is defined.",
+          "evidence": [
+            "large language model",
+            "retrieval",
+            "generation",
+            "augmented",
+            "embedding"
+          ],
+          "fix": "Add a '## Key Words' section defining every technical word in one simple sentence."
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All acronyms are expanded.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Example section present: False; example markers: 4.",
+          "evidence": [
+            "markers=4"
+          ],
+          "fix": "Add a full worked example section and at least one everyday analogy."
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "425 words (need 900-2300).",
+          "evidence": [
+            "words=425"
+          ],
+          "fix": "Add more explanation and examples."
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Quiz has 0 questions and 0 answers (need 3 each).",
+          "evidence": [
+            "questions=0",
+            "answers=0"
+          ],
+          "fix": "Add at least 3 simple questions in 'Check Yourself', each followed by 'Answer: ...'."
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": false,
+          "reason": "The lesson misdefines the acronym LLM, calling it \"Large Model\" instead of \"Large Language Model\".",
+          "evidence": [
+            "\"RAG is a method for making **Large** **Model** (LLM) **answers** **better**.\" (conflicts with F04: LLM stands for Large Language Model)"
+          ],
+          "fix": "Replace \"Large Model (LLM)\" with \"Large Language Model (LLM)\" and ensure the definition matches F04."
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "[overturned: judge failed it without evidence] The lesson omits several required key points: K2 (knowledge cutoff, private docs, hallucination), K3 (why RAG matters), K4 (indexing steps), K5 (query steps), K6 (model not retrained), and K7 (a limitation).",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": false,
+          "reason": "No concrete running example is present, and the only analogy is generic; it does not meet the requirement for a detailed Indian‑relevant example.",
+          "evidence": [
+            "The lesson provides only an open‑book exam analogy and repeats headings; it does not walk through a concrete step‑by‑step example of loading a document, chunking, embedding, retrieving a chunk, augmenting the prompt and generating an answer."
+          ],
+          "fix": "Insert a concrete example, e.g., loading a Hindi‑language college handbook PDF, chunking it into paragraph‑sized pieces, embedding them, storing in a vector DB, then querying \"What is the deadline for scholarship applications?\" showing retrieval of the relevant chunk, augmentation in the prompt, and the LLM generating the answer."
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": false,
+          "reason": "The lesson is disorganized, repeats the same content, introduces terms incorrectly before definition, and uses fragmented wording, making it hard for a beginner to follow.",
+          "evidence": [
+            "Repeated sections titled \"## What Is RAG?\" appear four times with identical content, causing disjointed flow.",
+            "\"RAG is a method for making **Large** **Model** (LLM) **answers** **better**.\" defines LLM incorrectly before any explanation of LLMs.",
+            "Broken words such as \"Retri val\" and \"Aug mented\" interrupt readability."
+          ],
+          "fix": "Rewrite the lesson in a linear structure: (1) introduce LLMs correctly, (2) define RAG and its two phases, (3) explain indexing steps, (4) explain query steps, (5) give analogy, (6) provide concrete example, (7) list benefits and limitations. Remove duplicate sections and fix broken word splits."
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Simulated learner got stuck 2 time(s) (blocking). Main idea understood: True.",
+          "evidence": [
+            "\"Large Model (LLM)\" -> The abbreviation LLM is used without a simple explanation, so Ravi does not know what it means",
+            "\"adds the text to the prompt\" -> The word prompt is used without a simple explanation, so Ravi cannot follow how the text is used"
+          ],
+          "fix": "Rewrite each quoted sentence in simpler words and explain the missing idea before using it."
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "Large Model (LLM)",
+            "why": "The abbreviation LLM is used without a simple explanation, so Ravi does not know what it means",
+            "severity": "blocking"
+          },
+          {
+            "quote": "adds the text to the prompt",
+            "why": "The word prompt is used without a simple explanation, so Ravi cannot follow how the text is used",
+            "severity": "blocking"
+          }
+        ],
+        "answers": {
+          "Q1": "RAG is a way to make a big computer model give better answers by first finding useful information and then writing a response with it.",
+          "Q2": "We need RAG because the model alone may forget facts; RAG lets it look up facts like an open‑book exam, so answers are more correct.",
+          "Q3": "When a user asks a question, the system first searches a data source to find relevant text, adds that text to the prompt to give the model context, and then the model writes the final answer using those facts."
+        },
+        "ravi_explains_it": "RAG works like an open‑book exam. First it finds the right page in a book, then it writes the answer using what it found. This helps the computer give more accurate answers.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 425,
+        "flesch_reading_ease": 88.1,
+        "avg_sentence_words": 5.7
+      },
+      "verdict": "REJECT",
+      "changes": {
+        "fixed": [
+          "D6"
+        ],
+        "still_failing": [
+          "D5",
+          "J1"
+        ],
+        "newly_failing": [
+          "D1",
+          "D7",
+          "D8",
+          "D9",
+          "J3",
+          "J4",
+          "J5"
+        ],
+        "lines_added": 29,
+        "lines_removed": 137,
+        "stats_before": {
+          "words": 1159,
+          "flesch_reading_ease": 80.4,
+          "avg_sentence_words": 6.6
+        },
+        "stats_after": {
+          "words": 425,
+          "flesch_reading_ease": 88.1,
+          "avg_sentence_words": 5.7
+        },
+        "offending_text": [
+          {
+            "check": "J1",
+            "quote": "The AI reads this. It writes the answer based on the facts. It does not guess.",
+            "now": "removed/rewritten"
+          }
+        ]
+      }
+    },
+    {
+      "attempt": 3,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Missing sections: Key Words, Recap, Check Yourself",
+          "evidence": [
+            "Key Words",
+            "Recap",
+            "Check Yourself"
+          ],
+          "fix": "Add the missing sections as '## ' headings in the required order."
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 81.1.",
+          "evidence": [
+            "score=81.1"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 6.5 words; none too long.",
+          "evidence": [
+            "avg=6.5"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "No Key Words section, so no term is defined.",
+          "evidence": [
+            "large language model",
+            "retrieval",
+            "generation",
+            "augmented",
+            "embedding"
+          ],
+          "fix": "Add a '## Key Words' section defining every technical word in one simple sentence."
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Acronyms never written in full: HR, LLS",
+          "evidence": [
+            "HR",
+            "LLS"
+          ],
+          "fix": "Write each acronym in full the first time, e.g. 'Large Language Model (LLM)'."
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 43 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "1842 words.",
+          "evidence": [
+            "words=1842"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Quiz has 0 questions and 0 answers (need 3 each).",
+          "evidence": [
+            "questions=0",
+            "answers=0"
+          ],
+          "fix": "Add at least 3 simple questions in 'Check Yourself', each followed by 'Answer: ...'."
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": false,
+          "reason": "The lesson misdefines LLM and incorrectly claims the model does not use its prior knowledge, which are factual errors.",
+          "evidence": [
+            "\"The Large Model (LLM) receives this prompt. It is a Large Model trained on huge text data.\" (conflicts with F04: LLM stands for Large Language Model)",
+            "\"It does not use its old memory. It only reads the note.\" (conflicts with F21: the model's internal knowledge remains and can still influence the answer)"
+          ],
+          "fix": "Correct the definition to \"Large Language Model (LLM)\" and state that the model still retains its trained knowledge but the retrieved text guides its answer."
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Key point K3 (ability to show sources) is not covered.",
+          "evidence": [
+            "Missing point: the lesson never mentions that RAG can show the sources (documents) used for an answer, which is required by K3."
+          ],
+          "fix": "Add a sentence explaining that RAG systems can display the retrieved chunks or document references alongside the answer so users can verify the source."
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson includes a concrete step‑by‑step example (college handbook) and the closed‑book/open‑book analogy, both relevant to an Indian beginner.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": false,
+          "reason": "The lesson jumps between many repetitive example sections and introduces undefined terms, making the teaching sequence incoherent for beginners.",
+          "evidence": [
+            "Repeated \"## A full example\" sections cause disjointed flow and confuse the reader.",
+            "The term \"LLL\" (Large Model) appears without definition, after many uses of \"LLM\", breaking logical order."
+          ],
+          "fix": "Organize the content into a single clear example section, remove redundant repeats, and ensure all acronyms (LLM) are defined before use; avoid introducing new terms like \"LLL\" without explanation."
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": true,
+          "reason": "No blocking confusion (6 minor, 3 unverifiable quote(s) ignored). Learner summary: RAG means the AI first searches a real document for the needed info and then uses that info to answer. It helps the AI give correct answers instead of guessing.",
+          "evidence": [
+            "minor: \"This limit is called the context limit.\"",
+            "minor: \"The LLL (Large Model) gets this.\"",
+            "minor: \"The LLS gets this.\""
+          ],
+          "fix": ""
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "It does not change its internal weight.",
+            "why": "The word \"weight\" is not explained in simple terms, so Ravi may not know what it means in this context.",
+            "severity": "minor"
+          },
+          {
+            "quote": "This limit is called the context limit.",
+            "why": "The term \"context\" is not explained, leaving Ravi unsure what the limit refers to.",
+            "severity": "minor"
+          },
+          {
+            "quote": "The LLL (Large Model) gets this.",
+            "why": "The abbreviation \"LLL\" is not explained; Ravi may not understand it refers to the AI model.",
+            "severity": "minor"
+          },
+          {
+            "quote": "The LLS gets this.",
+            "why": "The abbreviation \"LLS\" appears without explanation, causing confusion for Ravi.",
+            "severity": "minor"
+          },
+          {
+            "quote": "You turn **chunks** into **embed** **dings**.",
+            "why": "The split word \"embed dings\" may be hard to read and is not defined, confusing Ravi.",
+            "severity": "minor"
+          },
+          {
+            "quote": "You store **embed** **dings** in a **vector** **base**.",
+            "why": "The split terms \"embed dings\" and \"vector base\" are not explained, making them unclear for Ravi.",
+            "severity": "minor"
+          },
+          {
+            "quote": "It compares the question **vector** to all page **v** **ors**.",
+            "why": "The broken word \"v ors\" and the term \"vector\" are not clearly defined, causing confusion.",
+            "severity": "minor"
+          },
+          {
+            "quote": "It is **re** **val** (finding pages)",
+            "why": "The split term \"re val\" is not explained, so Ravi may not understand it means \"retrieval\".",
+            "severity": "minor"
+          },
+          {
+            "quote": "It is **aug** **mented** (adding pages to prompt)",
+            "why": "The split term \"aug mented\" is not explained, leaving Ravi unsure of its meaning.",
+            "severity": "minor"
+          }
+        ],
+        "answers": {
+          "Q1": "RAG is a way for a computer to first look up real documents for the answer and then write the answer using those documents.",
+          "Q2": "We need RAG because the computer may not know new or private facts and could guess wrong. RAG gives it real text so the answer is correct.",
+          "Q3": "When you ask a question, the system changes the question into numbers, finds the document pieces that have similar numbers, puts those pieces together with your question as a prompt, and then the AI reads that prompt and writes the answer."
+        },
+        "ravi_explains_it": "RAG means the AI first searches a real document for the needed info and then uses that info to answer. It helps the AI give correct answers instead of guessing.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 1842,
+        "flesch_reading_ease": 81.1,
+        "avg_sentence_words": 6.5
+      },
+      "verdict": "REJECT",
+      "changes": {
+        "fixed": [
+          "D7",
+          "D8",
+          "J3",
+          "J5"
+        ],
+        "still_failing": [
+          "D1",
+          "D5",
+          "D9",
+          "J1",
+          "J4"
+        ],
+        "newly_failing": [
+          "D6",
+          "J2"
+        ],
+        "lines_added": 286,
+        "lines_removed": 59,
+        "stats_before": {
+          "words": 425,
+          "flesch_reading_ease": 88.1,
+          "avg_sentence_words": 5.7
+        },
+        "stats_after": {
+          "words": 1842,
+          "flesch_reading_ease": 81.1,
+          "avg_sentence_words": 6.5
+        },
+        "offending_text": [
+          {
+            "check": "J1",
+            "quote": "RAG is a method for making **Large** **Model**",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J3",
+            "quote": "The lesson provides only an open‑book exam analogy and repeats headings; it does not walk through a concrete step‑by‑step example of loading a document, chunkin",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J4",
+            "quote": "Repeated sections titled \"## What Is RAG?\" appear four times with identical content, causing disjointed flow.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J4",
+            "quote": "RAG is a method for making **Large** **Model** (LLM) **answers** **better**.\" defines LLM incorrectly before any explanation of LLMs.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J4",
+            "quote": "Broken words such as \"Retri val\" and \"Aug mented\" interrupt readability.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J5",
+            "quote": "adds the text to the prompt",
+            "now": "removed/rewritten"
+          }
+        ]
+      }
+    }
+  ]
+}

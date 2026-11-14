@@ -23,7 +23,7 @@ from . import config, prompts
 from .evaluator import evaluate, failures_as_feedback
 from .inject import inject
 from .memory import Memory
-from .rubric import RUBRIC, lesson_stats
+from .rubric import RUBRIC, lesson_stats, looks_degenerate, preflight_checklist
 from .sources import load_source_pack, retrieve_for_outline
 
 
@@ -125,7 +125,7 @@ def build_graph(llm, memory: Memory):
             if not p.get("sections"):
                 raise ValueError("empty plan")
         except Exception as e:  # never let planning failure kill the run
-            p = {"title": f"Introduction to {state['topic']}", "sections": DEFAULT_SECTIONS,
+            p = {"title": state["topic"] if state["topic"].lower().startswith("intro") else f"Introduction to {state['topic']}", "sections": DEFAULT_SECTIONS,
                  "analogy": "open-book exam", "running_example": "a college rulebook chatbot", "terms_to_define": []}
             print(f"  [plan] planner failed ({e}); using default outline")
         ev = _log(state, f"[plan] '{p.get('title')}' with {len(p['sections'])} sections; analogy: {p.get('analogy', '')[:80]}")
@@ -147,7 +147,7 @@ def build_graph(llm, memory: Memory):
         common = dict(topic=state["topic"], learner=prompts.LEARNER_PROFILE,
                       misconceptions=pack.misconceptions_text() if pack else "(none)",
                       style=prompts.STYLE_RULES, template=prompts.LESSON_TEMPLATE,
-                      learned_rules=_rules_block(state.get("rules", [])))
+                      learned_rules=_rules_block(state.get("rules", [])), checklist=preflight_checklist())
         if attempt == 1:
             user = prompts.GENERATOR_USER.format(plan=json.dumps(state["plan"], indent=1, ensure_ascii=False),
                                                  facts=_facts_block(state["retrieved"]), **common)
@@ -157,10 +157,18 @@ def build_graph(llm, memory: Memory):
             user = prompts.REVISE_USER.format(failures=failures_as_feedback_from_dicts(prev["results"]),
                                               facts=pack.facts_text() if pack else "", lesson=prev["lesson"], **common)
             label = f"regenerate (retry {attempt - 1}/{config.MAX_RETRIES})"
-        lesson = llm.chat(prompts.GENERATOR_SYSTEM, user, model=config.GENERATOR_MODEL,
-                          temperature=config.GENERATOR_TEMPERATURE, role="generator", max_tokens=4096)
-        lesson = re.sub(r"^```(?:markdown|md)?\s*|\s*```$", "", lesson.strip())
-        ev = _log(state, f"[{label}] attempt {attempt}: {lesson_stats(lesson)['words']} words")
+        events = state.get("events") or []
+        temp = config.GENERATOR_TEMPERATURE
+        for sample in range(3):  # output guard: re-sample broken output, does not use a content retry
+            lesson = llm.chat(prompts.GENERATOR_SYSTEM, user, model=config.GENERATOR_MODEL,
+                              temperature=temp, role="generator", max_tokens=4096)
+            lesson = re.sub(r"^```(?:markdown|md)?\s*|\s*```$", "", lesson.strip())
+            broken = looks_degenerate(lesson)
+            if not broken:
+                break
+            events = _log({"events": events}, f"[guard] attempt {attempt} output looks broken ({broken}); re-sampling at lower temperature")
+            temp = max(0.2, temp - 0.2)
+        ev = _log({"events": events}, f"[{label}] attempt {attempt}: {lesson_stats(lesson)['words']} words")
         return {"lesson": lesson, "attempt": attempt, "planted": [], "events": ev}
 
     def inject_error(state: State) -> State:
@@ -193,6 +201,9 @@ def build_graph(llm, memory: Memory):
 
     def learn(state: State) -> State:
         memory.mark_rules_applied([r["id"] for r in state.get("rules", [])])
+        failed_this_run = sorted({r["id"] for h in state["history"] if not h.get("planted")
+                                  for r in h["results"] if not r["passed"]})
+        memory.mark_rule_failures(failed_this_run)
         new_rules = []
         for cid in memory.checks_needing_rules():
             name, _, _, desc = RUBRIC[cid]

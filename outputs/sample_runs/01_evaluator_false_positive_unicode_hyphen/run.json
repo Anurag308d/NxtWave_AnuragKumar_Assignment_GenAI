@@ -1,0 +1,614 @@
+{
+  "run_id": "20261113-141307-9716",
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+  "inject_mode": null,
+  "status": "human_review",
+  "plan": {
+    "title": "Intro to Retrieval‑Augmented Generation (RAG)",
+    "analogy": "Like going to a library (or a neighbour) to fetch the exact page you need before writing an answer, instead of trying to remember everything yourself.",
+    "running_example": "A student asks: “What are the latest COVID‑19 guidelines for schools in Delhi?” The system looks up a government circular PDF, a recent news article, and the school’s own policy document, then uses that info to answer.",
+    "sections": [
+      {
+        "title": "Before We Start",
+        "goal": "Know what you will learn and why it helps an AI career",
+        "points": [
+          "You will see how computers find up‑to‑date facts before answering",
+          "Helps build AI tools that are reliable and trustworthy"
+        ]
+      },
+      {
+        "title": "What Is RAG?",
+        "goal": "Understand the basic idea in plain words",
+        "points": [
+          "RAG means Retrieval‑Augmented Generation – first fetch relevant text, then let a language model write the answer",
+          "Analogy: like reading a book chapter before answering a question"
+        ]
+      },
+      {
+        "title": "Why Does It Matter?",
+        "goal": "See the problem RAG solves and its benefits",
+        "points": [
+          "LLMs stop at the knowledge they were trained on – they can be old or miss private data",
+          "They sometimes make up facts (hallucinate)",
+          "RAG gives fresh, private, and source‑backed answers without retraining the model"
+        ]
+      },
+      {
+        "title": "How Does It Work?",
+        "goal": "Learn the two main phases with a running example",
+        "points": [
+          "Indexing phase: split each document into small chunks, turn each chunk into a numeric vector (embedding), store vectors in a vector database",
+          "Query phase: turn the user question into a vector, find the most similar chunks, attach those chunks to the prompt, let the LLM generate the final answer"
+        ]
+      }
+    ]
+  },
+  "rules": [],
+  "new_rules": [
+    {
+      "check_id": "D6",
+      "rule": "Ensure each acronym is spelled out in full on its first appearance, e.g., COVID-19 (Coronavirus Disease 2019)."
+    }
+  ],
+  "events": [
+    "14:13:07 [memory] 0 learned rule(s) loaded for the generator; 0 past failure example(s) loaded for the evaluator",
+    "14:13:12 [plan] 'Intro to Retrieval‑Augmented Generation (RAG)' with 4 sections; analogy: Like going to a library (or a neighbour) to fetch the exact page you need before",
+    "14:13:12 [retrieve] 21 distinct source facts retrieved across 4 sections (BM25)",
+    "14:13:17 [generate] attempt 1: 1008 words",
+    "14:14:08 [evaluate] attempt 1: 10/14 checks passed -> REJECTED (D5, D6, J2, J4)",
+    "14:14:14 [regenerate (retry 1/2)] attempt 2: 1059 words",
+    "14:15:53 [evaluate] attempt 2: 13/14 checks passed -> REJECTED (D6)",
+    "14:15:59 [regenerate (retry 2/2)] attempt 3: 1083 words",
+    "14:17:38 [evaluate] attempt 3: 13/14 checks passed -> REJECTED (D6)",
+    "14:17:38 [human_review] retries exhausted; best = attempt 3 -> NOT shipped, flagged for a human",
+    "14:17:39 [learn] 1 new rule(s) learned from repeated failures\n      + (D6) Ensure each acronym is spelled out in full on its first appearance, e.g., COVID-19 (Coronavirus Disease 2019)."
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 62.7.",
+          "evidence": [
+            "score=62.7"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 12.6 words; none too long.",
+          "evidence": [
+            "avg=12.6"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Technical terms used but not defined in Key Words: prompt, indexing, query",
+          "evidence": [
+            "prompt",
+            "indexing",
+            "query"
+          ],
+          "fix": "Add each missing term to Key Words with a one-line simple definition, or remove the term if it is not needed."
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Acronyms never written in full: COVID",
+          "evidence": [
+            "COVID"
+          ],
+          "fix": "Write each acronym in full the first time, e.g. 'Large Language Model (LLM)'."
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 3 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "1008 words.",
+          "evidence": [
+            "words=1008"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 4 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All statements are consistent with source facts and do not contain known misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Missing key point K3: RAG can show the sources (documents) used for an answer, allowing users to verify the information.",
+          "evidence": [
+            "\"RAG helps solve these problems: It lets the model answer questions about recent or private data without changing the model itself.\""
+          ],
+          "fix": "Add a sentence such as \"RAG systems can also display the exact documents or passages that were used to generate the answer, so users can check the source.\""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "Includes a concrete running example, an everyday analogy (open‑book exam), and Indian‑specific examples (Delhi schools).",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": false,
+          "reason": "The term LLM is used before it is defined, which may confuse beginners. Also the term \"vector database\" is introduced before its definition.",
+          "evidence": [
+            "\"Large language models (LLMs) only know what they learned before a certain date.\""
+          ],
+          "fix": "Move the definition of LLM (e.g., \"An LLM is a computer program trained on vast amounts of text…\") to immediately after the first mention of LLM, and similarly introduce \"vector database\" before it is used in the indexing section."
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": true,
+          "reason": "No blocking confusion (0 minor). Learner summary: ",
+          "evidence": [],
+          "fix": ""
+        }
+      ],
+      "learner": {},
+      "planted": [],
+      "stats": {
+        "words": 1008,
+        "flesch_reading_ease": 62.7,
+        "avg_sentence_words": 12.6
+      },
+      "verdict": "REJECT"
+    },
+    {
+      "attempt": 2,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 62.5.",
+          "evidence": [
+            "score=62.5"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 12.8 words; none too long.",
+          "evidence": [
+            "avg=12.8"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Every technical term used is defined in Key Words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Acronyms never written in full: COVID",
+          "evidence": [
+            "COVID"
+          ],
+          "fix": "Write each acronym in full the first time, e.g. 'Large Language Model (LLM)'."
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 3 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "1059 words.",
+          "evidence": [
+            "words=1059"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 4 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All statements are factually accurate and do not contradict source facts or known misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All required key points K1–K7 are explicitly covered in the lesson.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "Lesson includes a concrete running example, an everyday analogy, and Indian‑specific examples suitable for beginners.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "Teaching flow is coherent, concepts are introduced before use, and no contradictions or large jumps are present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": true,
+          "reason": "No blocking confusion (0 minor). Learner summary: ",
+          "evidence": [],
+          "fix": ""
+        }
+      ],
+      "learner": {},
+      "planted": [],
+      "stats": {
+        "words": 1059,
+        "flesch_reading_ease": 62.5,
+        "avg_sentence_words": 12.8
+      },
+      "verdict": "REJECT",
+      "changes": {
+        "fixed": [
+          "D5",
+          "J2",
+          "J4"
+        ],
+        "still_failing": [
+          "D6"
+        ],
+        "newly_failing": [],
+        "lines_added": 42,
+        "lines_removed": 37,
+        "stats_before": {
+          "words": 1008,
+          "flesch_reading_ease": 62.7,
+          "avg_sentence_words": 12.6
+        },
+        "stats_after": {
+          "words": 1059,
+          "flesch_reading_ease": 62.5,
+          "avg_sentence_words": 12.8
+        },
+        "offending_text": [
+          {
+            "check": "J2",
+            "quote": "RAG helps solve these problems: It lets the model answer questions about recent or private data without changing the model itself.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J4",
+            "quote": "Large language models (LLMs) only know what they learned before a certain date.",
+            "now": "removed/rewritten"
+          }
+        ]
+      }
+    },
+    {
+      "attempt": 3,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 61.9.",
+          "evidence": [
+            "score=61.9"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 12.8 words; none too long.",
+          "evidence": [
+            "avg=12.8"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Every technical term used is defined in Key Words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Acronyms never written in full: COVID",
+          "evidence": [
+            "COVID"
+          ],
+          "fix": "Write each acronym in full the first time, e.g. 'Large Language Model (LLM)'."
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 3 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "1083 words.",
+          "evidence": [
+            "words=1083"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 4 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All statements in the lesson are consistent with the source facts and do not contain any known misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson covers every required key point (K1–K7) explicitly and in detail.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "It includes a concrete running example, an everyday analogy, and Indian‑specific examples that are suitable for a beginner.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson introduces concepts in a logical order, uses each concept only after explanation, and contains no contradictions or abrupt jumps.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": true,
+          "reason": "No blocking confusion (0 minor). Learner summary: ",
+          "evidence": [],
+          "fix": ""
+        }
+      ],
+      "learner": {},
+      "planted": [],
+      "stats": {
+        "words": 1083,
+        "flesch_reading_ease": 61.9,
+        "avg_sentence_words": 12.8
+      },
+      "verdict": "REJECT",
+      "changes": {
+        "fixed": [],
+        "still_failing": [
+          "D6"
+        ],
+        "newly_failing": [],
+        "lines_added": 8,
+        "lines_removed": 5,
+        "stats_before": {
+          "words": 1059,
+          "flesch_reading_ease": 62.5,
+          "avg_sentence_words": 12.8
+        },
+        "stats_after": {
+          "words": 1083,
+          "flesch_reading_ease": 61.9,
+          "avg_sentence_words": 12.8
+        },
+        "offending_text": []
+      }
+    }
+  ]
+}

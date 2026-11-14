@@ -1,0 +1,1127 @@
+{
+  "run_id": "20261113-142327-36d5",
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+  "inject_mode": null,
+  "status": "human_review",
+  "plan": {
+    "title": "How AI Finds Answers in Your Files: Intro to RAG",
+    "analogy": "Imagine you are a student in a library. You do not memorize every book. Instead, you look up the specific page you need (Retrieval), read it, and then answer the question based on what you just read (Generation). RAG is like giving the AI a library card so it can look up facts instead of guessing from memory.",
+    "running_example": "A user asks: 'What is the leave policy for sick days in our company?' The AI searches the company's 'HR_Handbook.pdf' to find the answer.",
+    "sections": [
+      {
+        "title": "Before We Start",
+        "goal": "Understand that this lesson explains how AI uses documents to answer questions accurately.",
+        "points": [
+          "You will learn how AI can read your private files to give correct answers.",
+          "This skill is very important for AI jobs because companies need AI that knows their specific data.",
+          "No coding is needed to understand the concept today."
+        ]
+      },
+      {
+        "title": "What Is RAG?",
+        "goal": "Define RAG as a two-step process: finding information first, then answering.",
+        "points": [
+          "RAG stands for Retrieval-Augmented Generation.",
+          "Step 1 (Retrieval): The system finds the most relevant pieces of text from your documents.",
+          "Step 2 (Generation): The AI uses those found pieces to write the final answer.",
+          "It is like a student opening a textbook to check a fact before answering an exam question."
+        ]
+      },
+      {
+        "title": "Why Does It Matter?",
+        "goal": "Understand the problems RAG solves: outdated info, private data, and hallucinations.",
+        "points": [
+          "Problem 1: AI models have a 'knowledge cutoff' date. They do not know news from last week.",
+          "Problem 2: AI does not know your private company documents or personal notes.",
+          "Problem 3: AI can 'hallucinate' (make up false facts) if it is not sure.",
+          "Benefit: RAG makes answers up-to-date, private, and factual by showing sources."
+        ]
+      },
+      {
+        "title": "How Does It Work?",
+        "goal": "Explain the Indexing and Query phases using the running example.",
+        "points": [
+          "Phase 1 (Indexing - One-time setup):",
+          "1. Chunking: The AI cuts your long PDF into small, readable pieces (like cutting a book into pages).",
+          "2. Embedding: The AI converts each piece into a list of numbers (a 'vector') that represents its meaning.",
+          "3. Storage: These numbers are saved in a special fast database called a 'Vector Database'.",
+          "Phase 2 (Query - When you ask a question):",
+          "1. The AI converts your question into numbers too.",
+          "2. It searches the Vector Database for the pieces that are 'closest' in meaning to your question.",
+          "3. It takes the top 3-5 matching pieces and puts them into the prompt (instruction) for the AI.",
+          "4. The AI reads these pieces and writes the answer. It does not change its own brain; it just reads the provided notes."
+        ]
+      },
+      {
+        "title": "A Full Example",
+        "goal": "See the end-to-end flow with a new concrete question.",
+        "points": [
+          "Scenario: You have a file called 'Product_Manual.pdf'.",
+          "Question: 'How do I reset the Wi-Fi password?'",
+          "Step 1: The system looks in the Vector Database for chunks related to 'reset' and 'Wi-Fi'.",
+          "Step 2: It finds a chunk from page 45: 'To reset Wi-Fi, hold the button for 10 seconds...'",
+          "Step 3: The AI receives this text and answers: 'To reset the Wi-Fi password, please hold the button for 10 seconds as per page 45 of the manual.'",
+          "Result: The answer is correct and cites the source."
+        ]
+      },
+      {
+        "title": "Where Is It Used?",
+        "goal": "Identify real-world uses and honest limitations.",
+        "points": [
+          "Use 1: Customer Support Bots that read the company help center to answer user queries.",
+          "Use 2: Legal AI that searches through thousands of case files to find relevant laws.",
+          "Use 3: Personal AI Assistants that remember your notes and emails.",
+          "Limitation 1: If the document is not in the database, the AI cannot answer.",
+          "Limitation 2: If the search finds the wrong page, the answer will be wrong."
+        ]
+      },
+      {
+        "title": "Key Words",
+        "goal": "Define technical terms in simple language.",
+        "points": [
+          "**RAG**: A method where AI looks up facts before answering.",
+          "**Retrieval**: The act of finding the right information.",
+          "**Generation**: The act of writing the answer.",
+          "**Chunking**: Cutting long text into small pieces.",
+          "**Embedding**: Turning text into numbers so computers can compare meanings.",
+          "**Vector Database**: A special storage place for these number lists.",
+          "**Hallucination**: When AI makes up a fact that is not true."
+        ]
+      },
+      {
+        "title": "Quick Recap",
+        "goal": "Summarize the core concepts.",
+        "points": [
+          "RAG = Retrieve first, then Generate.",
+          "It solves the problem of AI not knowing private or new data.",
+          "Documents are cut into chunks and turned into numbers (embeddings).",
+          "These numbers are stored in a Vector Database.",
+          "When you ask a question, the AI finds similar numbers and reads the matching text.",
+          "The AI model itself is not retrained or changed."
+        ]
+      },
+      {
+        "title": "Check Yourself",
+        "goal": "Test understanding with simple questions.",
+        "points": [
+          "Q1: Does RAG change the brain of the AI model? Answer: No, the model stays the same; it just reads extra notes.",
+          "Q2: What is 'chunking'? Answer: Cutting a long document into small pieces.",
+          "Q3: Why do we use a Vector Database? Answer: To store the number lists (embeddings) so we can find similar texts quickly.",
+          "Q4: What is a 'hallucination'? Answer: When the AI makes up a false fact.",
+          "Q5: If I ask a question about a file I did not upload, can RAG answer it? Answer: No, it can only use the files it has indexed."
+        ]
+      }
+    ],
+    "terms_to_define": [
+      "RAG",
+      "Retrieval",
+      "Generation",
+      "Knowledge Cutoff",
+      "Hallucination",
+      "Chunking",
+      "Embedding",
+      "Vector",
+      "Vector Database",
+      "Prompt",
+      "Indexing",
+      "Query"
+    ]
+  },
+  "rules": [],
+  "new_rules": [
+    {
+      "check_id": "J5",
+      "rule": "Introduce each new term or acronym with a simple definition and everyday example before using it."
+    }
+  ],
+  "events": [
+    "14:23:27 [memory] 0 learned rule(s) loaded for the generator; 0 past failure example(s) loaded for the evaluator",
+    "14:23:30 [plan] 'How AI Finds Answers in Your Files: Intro to RAG' with 9 sections; analogy: Imagine you are a student in a library. You do not memorize every book. Instead,",
+    "14:23:30 [retrieve] 23 distinct source facts retrieved across 9 sections (BM25)",
+    "14:23:48 [generate] attempt 1: 916 words",
+    "14:23:59 [evaluate] attempt 1: 8/14 checks passed -> REJECTED (D1, D5, D6, D7, J1, J5)",
+    "14:24:21 [regenerate (retry 1/2)] attempt 2: 1099 words",
+    "14:25:08 [evaluate] attempt 2: 13/14 checks passed -> REJECTED (J5)",
+    "14:26:29 [regenerate (retry 2/2)] attempt 3: 781 words",
+    "14:26:57 [evaluate] attempt 3: 12/14 checks passed -> REJECTED (D8, J5)",
+    "14:26:57 [human_review] retries exhausted; best = attempt 2 -> NOT shipped, flagged for a human",
+    "14:26:58 [learn] 1 new rule(s) learned from repeated failures\n      + (J5) Introduce each new term or acronym with a simple definition and everyday example before using it."
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Missing sections: Example",
+          "evidence": [
+            "Example"
+          ],
+          "fix": "Add the missing sections as '## ' headings in the required order."
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 78.6.",
+          "evidence": [
+            "score=78.6"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 8.1 words; none too long.",
+          "evidence": [
+            "avg=8.1"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Technical terms used but not defined in Key Words: augmented, semantic search",
+          "evidence": [
+            "augmented",
+            "semantic search"
+          ],
+          "fix": "Add each missing term to Key Words with a one-line simple definition, or remove the term if it is not needed."
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Acronyms never written in full: RAG",
+          "evidence": [
+            "RAG"
+          ],
+          "fix": "Write each acronym in full the first time, e.g. 'Large Language Model (LLM)'."
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Example section present: False; example markers: 5.",
+          "evidence": [
+            "markers=5"
+          ],
+          "fix": "Add a full worked example section and at least one everyday analogy."
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "916 words.",
+          "evidence": [
+            "words=916"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 5 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": false,
+          "reason": "The lesson overstates RAG's capabilities, claiming it completely fixes hallucination and always yields true data, which is inaccurate.",
+          "evidence": [
+            "\"RAG fixes these issues.\" (conflicts with F08, which states RAG reduces hallucination but does not remove it completely)",
+            "\"The answer is based on true data.\" (conflicts with F26 and F27, which note that if retrieval returns wrong or outdated documents, the answer can be wrong)"
+          ],
+          "fix": "Change the sentences to say that RAG *reduces* hallucination and can improve answer accuracy, but it does not guarantee correctness; the quality of the answer depends on the relevance and correctness of the retrieved documents."
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All required key points K1‑K7 are covered in the lesson.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson includes a step‑by‑step running example, an open‑book exam analogy, and uses familiar Indian contexts like HR handbooks and product manuals.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "Concepts are introduced before they are used, the flow is logical, and there are no contradictions or jumps that would confuse a beginner.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Simulated learner got stuck 17 time(s) (blocking). Main idea understood: True.",
+          "evidence": [
+            "\"RAG stands for Retrieval-Augmented Generation.\" -> Ravi does not know the acronym RAG or the meaning of 'Retrieval-Augmented Generation'.",
+            "\"Retrieval means finding the right text.\" -> The word 'Retrieval' is unfamiliar to Ravi.",
+            "\"Generation means writing the answer.\" -> The word 'Generation' is unfamiliar to Ravi.",
+            "\"This is called the knowledge cutoff.\" -> The phrase 'knowledge cutoff' is not explained and is unknown to Ravi.",
+            "\"This is called hallucination.\" -> The term 'hallucination' is technical and unknown to Ravi.",
+            "\"RAG has two phases: Indexing and Query.\" -> The words 'phases', 'Indexing', and 'Query' are new concepts for Ravi."
+          ],
+          "fix": "Rewrite each quoted sentence in simpler words and explain the missing idea before using it."
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "RAG stands for Retrieval-Augmented Generation.",
+            "why": "Ravi does not know the acronym RAG or the meaning of 'Retrieval-Augmented Generation'.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Retrieval means finding the right text.",
+            "why": "The word 'Retrieval' is unfamiliar to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Generation means writing the answer.",
+            "why": "The word 'Generation' is unfamiliar to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "This is called the knowledge cutoff.",
+            "why": "The phrase 'knowledge cutoff' is not explained and is unknown to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "This is called hallucination.",
+            "why": "The term 'hallucination' is technical and unknown to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "RAG has two phases: Indexing and Query.",
+            "why": "The words 'phases', 'Indexing', and 'Query' are new concepts for Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Chunking: The AI cuts the long HR_Handbook.pdf into small, readable chunks.",
+            "why": "The term 'Chunking' is not explained and is unfamiliar.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Embeddings: The AI converts each text chunk into a list of numbers.",
+            "why": "The word 'Embeddings' is technical and unknown to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "This list is called a vector.",
+            "why": "The term 'vector' is unfamiliar to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Vector Storage: These number vectors are sent to a special database.",
+            "why": "The phrase 'Vector Storage' and the concept of a 'database' are new to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "It is called a Vector database.",
+            "why": "The term 'Vector database' is technical and unknown.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Question Vector: The AI converts your question into numbers too.",
+            "why": "The phrase 'Question Vector' is unfamiliar.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Semantic Retrieval: The system searches the Vector database.",
+            "why": "The term 'Semantic Retrieval' is technical and unknown.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Augmentation: The system takes the top 3-5 best-matching chunks.",
+            "why": "The word 'Augmentation' and 'best-matching' are not explained.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "It pastes them into the prompt (the message sent to the AI).",
+            "why": "The term 'prompt' is unfamiliar to Ravi.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "It does not change its own \"brain\".",
+            "why": "The metaphor 'brain' for model parameters may confuse Ravi.",
+            "severity": "minor"
+          },
+          {
+            "quote": "It just uses the provided notes.",
+            "why": "The word 'notes' in this context is unclear to Ravi.",
+            "severity": "minor"
+          },
+          {
+            "quote": "It cites the source.",
+            "why": "The verb 'cites' is not known to Ravi.",
+            "severity": "minor"
+          },
+          {
+            "quote": "RAG reduces hallucination, but it does not remove it completely.",
+            "why": "The term 'hallucination' appears again without explanation, causing confusion.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "If the document is not in the database, the AI cannot answer.",
+            "why": "The concept of a 'database' storing documents is not clear to Ravi.",
+            "severity": "blocking"
+          }
+        ],
+        "ravi_explains_it": "Ravi would say that this is a way for a computer to look inside a file first, find the part that talks about the question, and then tell you the answer, instead of just guessing. He would compare it to opening a book to the right page before answering a test question.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 916,
+        "flesch_reading_ease": 78.6,
+        "avg_sentence_words": 8.1
+      },
+      "verdict": "REJECT"
+    },
+    {
+      "attempt": 2,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 77.2.",
+          "evidence": [
+            "score=77.2"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 8.3 words; none too long.",
+          "evidence": [
+            "avg=8.3"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Every technical term used is defined in Key Words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All acronyms are expanded.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 6 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "1099 words.",
+          "evidence": [
+            "words=1099"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 5 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "No statements conflict with source facts or known misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All required key points K1‑K7 are present in the lesson.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson includes two concrete step‑by‑step examples, an everyday exam analogy, and the examples are relevant to an Indian beginner.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The concepts are introduced before use and the sections follow a logical progression without contradictions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Simulated learner got stuck 16 time(s) (blocking). Main idea understood: False.",
+          "evidence": [
+            "\"# Intro to Retrieval-Augmented Generation (RAG)\" -> The term \"Retrieval-Augmented Generation (RAG)\" contains three technical words Ravi has never seen, so he cannot grasp what the lesson is about",
+            "\"## What Is Retrieval-Augmented Generation (RAG)?\" -> Repeats the same unknown acronym; Ravi still has no idea what it means",
+            "\"**Retrieval-Augmented Generation** is a method for AI.\" -> Uses the phrase \"Retrieval-Augmented Generation\" without simple explanation; Ravi is lost",
+            "\"Without RAG, the student writes from memory.\" -> Mentions \"RAG\" again; Ravi cannot connect it to the previous sentence",
+            "\"With RAG, the student opens their book.\" -> Again uses the unknown term \"RAG\"; Ravi cannot follow the comparison",
+            "\"RAG helps reduce this problem.\" -> Refers to \"RAG\" again without clarification; Ravi still does not know what it is"
+          ],
+          "fix": "Rewrite each quoted sentence in simpler words and explain the missing idea before using it."
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "# Intro to Retrieval-Augmented Generation (RAG)",
+            "why": "The term \"Retrieval-Augmented Generation (RAG)\" contains three technical words Ravi has never seen, so he cannot grasp what the lesson is about",
+            "severity": "blocking"
+          },
+          {
+            "quote": "## What Is Retrieval-Augmented Generation (RAG)?",
+            "why": "Repeats the same unknown acronym; Ravi still has no idea what it means",
+            "severity": "blocking"
+          },
+          {
+            "quote": "**Retrieval-Augmented Generation** is a method for AI.",
+            "why": "Uses the phrase \"Retrieval-Augmented Generation\" without simple explanation; Ravi is lost",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Without RAG, the student writes from memory.",
+            "why": "Mentions \"RAG\" again; Ravi cannot connect it to the previous sentence",
+            "severity": "blocking"
+          },
+          {
+            "quote": "With RAG, the student opens their book.",
+            "why": "Again uses the unknown term \"RAG\"; Ravi cannot follow the comparison",
+            "severity": "blocking"
+          },
+          {
+            "quote": "**Retrieval** means finding the right text from a source.",
+            "why": "The word \"Retrieval\" is new; even with definition Ravi may not link it to later steps",
+            "severity": "minor"
+          },
+          {
+            "quote": "**Augmented** means adding helpful extra information.",
+            "why": "The word \"Augmented\" is unfamiliar; Ravi may not see how it fits later",
+            "severity": "minor"
+          },
+          {
+            "quote": "**Generation** means writing the final answer.",
+            "why": "The word \"Generation\" is new; Ravi may not understand its role in the process",
+            "severity": "minor"
+          },
+          {
+            "quote": "This date is called the **knowledge cutoff**.",
+            "why": "The phrase \"knowledge cutoff\" is technical and not explained further; Ravi may be confused about its relevance",
+            "severity": "minor"
+          },
+          {
+            "quote": "This is called **hallucination**.",
+            "why": "The term \"hallucination\" is used in a technical sense that Ravi has never heard; he may think of dreams",
+            "severity": "minor"
+          },
+          {
+            "quote": "RAG helps reduce this problem.",
+            "why": "Refers to \"RAG\" again without clarification; Ravi still does not know what it is",
+            "severity": "blocking"
+          },
+          {
+            "quote": "RAG has two main stages.",
+            "why": "Mentions \"RAG\" and \"stages\" without clear link to earlier definition; Ravi cannot see the structure",
+            "severity": "blocking"
+          },
+          {
+            "quote": "We call them **Indexing** and **Query**.",
+            "why": "The words \"Indexing\" and \"Query\" are new technical terms; Ravi cannot picture what they mean",
+            "severity": "minor"
+          },
+          {
+            "quote": "### Stage 1: Preparing the Files (Indexing)",
+            "why": "Uses the term \"Indexing\" again in a heading; Ravi is still unclear",
+            "severity": "minor"
+          },
+          {
+            "quote": "**Chunking**: The system cuts the long document into small pieces.",
+            "why": "The word \"Chunking\" is unknown; Ravi may not understand why it is needed",
+            "severity": "minor"
+          },
+          {
+            "quote": "We call these **chunks**.",
+            "why": "Introduces the noun \"chunks\" without everyday example; Ravi may be confused",
+            "severity": "minor"
+          },
+          {
+            "quote": "**Embedding**: The system turns each chunk into a list of numbers.",
+            "why": "The concept of \"Embedding\" and turning text into numbers is abstract for Ravi; he cannot follow the later steps that rely on it",
+            "severity": "blocking"
+          },
+          {
+            "quote": "This list is called an **embedding**.",
+            "why": "Repeats the unknown term; Ravi remains confused",
+            "severity": "blocking"
+          },
+          {
+            "quote": "This is called a **vector database**.",
+            "why": "The phrase \"vector database\" combines two technical words Ravi has never heard; he cannot picture the storage system",
+            "severity": "blocking"
+          },
+          {
+            "quote": "### Stage 2: Answering the Question (Query)",
+            "why": "Uses \"Query\" again without clear meaning; Ravi is still unsure",
+            "severity": "minor"
+          },
+          {
+            "quote": "**Question Embedding**: The system turns your question into numbers too.",
+            "why": "Combines two unknown terms \"Question Embedding\"; Ravi cannot see how his question becomes numbers",
+            "severity": "blocking"
+          },
+          {
+            "quote": "**Semantic Search**: The system looks in the database.",
+            "why": "The word \"Semantic\" is unfamiliar; Ravi does not know that it means \"by meaning\"",
+            "severity": "minor"
+          },
+          {
+            "quote": "This is called **semantic search**.",
+            "why": "Repeats the unknown term; Ravi stays confused",
+            "severity": "minor"
+          },
+          {
+            "quote": "**Augmentation**: The system takes the top few best-matching chunks.",
+            "why": "The term \"Augmentation\" is new and abstract; Ravi cannot understand what is being added",
+            "severity": "blocking"
+          },
+          {
+            "quote": "This creates a new input message called a **prompt**.",
+            "why": "The word \"prompt\" is technical jargon; Ravi does not know it refers to the combined question and chunks",
+            "severity": "minor"
+          },
+          {
+            "quote": "**Generation**: The AI reads the question and the added chunks.",
+            "why": "Repeats the term \"Generation\" which Ravi still does not fully grasp",
+            "severity": "minor"
+          },
+          {
+            "quote": "RAG is used in many real jobs.",
+            "why": "Again mentions \"RAG\" without clarification; Ravi cannot connect the concept to the examples",
+            "severity": "blocking"
+          },
+          {
+            "quote": "RAG reduces **hallucination**, but it does not remove it completely.",
+            "why": "Uses \"hallucination\" again in a technical sense; Ravi is still unclear about the meaning",
+            "severity": "minor"
+          },
+          {
+            "quote": "*   **Retrieval-Augmented Generation (RAG)**: A method where AI finds information first, then writes an answer using it.",
+            "why": "The definition repeats the same complex term; Ravi may not understand the whole phrase",
+            "severity": "blocking"
+          },
+          {
+            "quote": "*   **Embedding**: Turning text into a list of numbers so computers can compare meanings.",
+            "why": "The idea of turning text into numbers is abstract for Ravi; he may not see why this is done",
+            "severity": "blocking"
+          },
+          {
+            "quote": "*   **Vector Database**: A special storage place for these number lists.",
+            "why": "Combines two unknown words; Ravi cannot picture what a \"vector database\" looks like",
+            "severity": "blocking"
+          },
+          {
+            "quote": "*   **Semantic Search**: Searching by meaning, not just exact words.",
+            "why": "The concept of searching by meaning is new; Ravi may not grasp how it differs from normal search",
+            "severity": "minor"
+          }
+        ],
+        "ravi_explains_it": "Ravi would say: \"I read that a computer can first look for the right part of a document and then write an answer, but many words like RAG, embedding, vector database, and hallucination are new to me, so I only get the basic idea of \"find then answer\".",
+        "understood_main_idea": false
+      },
+      "planted": [],
+      "stats": {
+        "words": 1099,
+        "flesch_reading_ease": 77.2,
+        "avg_sentence_words": 8.3
+      },
+      "verdict": "REJECT",
+      "changes": {
+        "fixed": [
+          "D1",
+          "D5",
+          "D6",
+          "D7",
+          "J1"
+        ],
+        "still_failing": [
+          "J5"
+        ],
+        "newly_failing": [],
+        "lines_added": 50,
+        "lines_removed": 43,
+        "stats_before": {
+          "words": 916,
+          "flesch_reading_ease": 78.6,
+          "avg_sentence_words": 8.1
+        },
+        "stats_after": {
+          "words": 1099,
+          "flesch_reading_ease": 77.2,
+          "avg_sentence_words": 8.3
+        },
+        "offending_text": [
+          {
+            "check": "J1",
+            "quote": "RAG fixes these issues.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J1",
+            "quote": "The answer is based on true data.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J5",
+            "quote": "RAG stands for Retrieval-Augmented Generation.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J5",
+            "quote": "Retrieval means finding the right text.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J5",
+            "quote": "Generation means writing the answer.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J5",
+            "quote": "This is called the knowledge cutoff.",
+            "now": "removed/rewritten"
+          }
+        ]
+      }
+    },
+    {
+      "attempt": 3,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 70.8.",
+          "evidence": [
+            "score=70.8"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 12.1 words; none too long.",
+          "evidence": [
+            "avg=12.1"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Every technical term used is defined in Key Words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All acronyms are expanded.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 4 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "781 words (need 900-2300).",
+          "evidence": [
+            "words=781"
+          ],
+          "fix": "Add more explanation and examples."
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 5 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All statements are consistent with the source facts and do not contain known misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson covers every required key point K1‑K7.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "It includes a step‑by‑step running example, a full example, and the student‑book analogy suitable for an Indian beginner.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The concepts are introduced in a logical order with no circular dependencies or contradictions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Simulated learner got stuck 11 time(s) (blocking). Main idea understood: True.",
+          "evidence": [
+            "\"Retrieval-Augmented Generation (RAG) is a way for a computer to find useful text and then write an answer from it.\" -> Term \"Retrieval-Augmented Generation (RAG)\" is completely new",
+            "\"They do not know new events after a certain date, called the knowledge cutoff.\" -> Phrase \"knowledge cutoff\" is not explained",
+            "\"Sometimes AI makes up facts that are not true; this is called hallucination.\" -> Word \"hallucination\" is unfamiliar",
+            "\"RAG has two main parts: indexing and query.\" -> Terms \"indexing\" and \"query\" are new concepts",
+            "\"During indexing, you collect documents, split them into small pieces called chunks, turn each chunk into a list of numbers called an embedding, and store these embeddings in a special database.\" -> Multiple new terms: documents, chunks, embedding, database",
+            "\"Large Language Model (LLM): a computer program that can understand questions and write human‑like text.\" -> Acronym \"LLM\" and phrase \"Large Language Model\" are not explained"
+          ],
+          "fix": "Rewrite each quoted sentence in simpler words and explain the missing idea before using it."
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "This skill makes AI smarter and more useful.",
+            "why": "Word \"AI\" is unknown to Ravi",
+            "severity": "minor"
+          },
+          {
+            "quote": "It is a good start if you want a job in AI.",
+            "why": "Word \"AI\" is unknown",
+            "severity": "minor"
+          },
+          {
+            "quote": "Retrieval-Augmented Generation (RAG) is a way for a computer to find useful text and then write an answer from it.",
+            "why": "Term \"Retrieval-Augmented Generation (RAG)\" is completely new",
+            "severity": "blocking"
+          },
+          {
+            "quote": "They do not know new events after a certain date, called the knowledge cutoff.",
+            "why": "Phrase \"knowledge cutoff\" is not explained",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Sometimes AI makes up facts that are not true; this is called hallucination.",
+            "why": "Word \"hallucination\" is unfamiliar",
+            "severity": "blocking"
+          },
+          {
+            "quote": "RAG lets the computer answer new or private questions without retraining.",
+            "why": "Words \"private\" and \"retraining\" are not explained",
+            "severity": "minor"
+          },
+          {
+            "quote": "RAG has two main parts: indexing and query.",
+            "why": "Terms \"indexing\" and \"query\" are new concepts",
+            "severity": "blocking"
+          },
+          {
+            "quote": "During indexing, you collect documents, split them into small pieces called chunks, turn each chunk into a list of numbers called an embedding, and store these embeddings in a special database.",
+            "why": "Multiple new terms: documents, chunks, embedding, database",
+            "severity": "blocking"
+          },
+          {
+            "quote": "During query, the computer turns your question into an embedding, finds the most similar chunks, adds those chunks to the question, and then writes the answer.",
+            "why": "Term \"embedding\" and idea of \"similar chunks\" are unclear",
+            "severity": "minor"
+          },
+          {
+            "quote": "Suppose you have a PDF of your college notice board.",
+            "why": "Abbreviation \"PDF\" is unknown",
+            "severity": "minor"
+          },
+          {
+            "quote": "Large Language Model (LLM): a computer program that can understand questions and write human‑like text.",
+            "why": "Acronym \"LLM\" and phrase \"Large Language Model\" are not explained",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Augmented: adding extra information to help the answer.",
+            "why": "Word \"augmented\" is unfamiliar",
+            "severity": "minor"
+          },
+          {
+            "quote": "Vector database: a place that stores embeddings and lets the computer find similar ones quickly.",
+            "why": "Term \"vector database\" is unknown",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Semantic search: searching by meaning, not just by exact words.",
+            "why": "Phrase \"semantic search\" is not explained",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Prompt: the text given to the computer, including the question and the retrieved chunks.",
+            "why": "Word \"prompt\" is unfamiliar",
+            "severity": "minor"
+          },
+          {
+            "quote": "Embedding: a list of numbers that represents the meaning of a chunk.",
+            "why": "Concept of \"embedding\" is new",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Indexing: the one‑time step of preparing and storing documents.",
+            "why": "Term \"indexing\" is not explained here",
+            "severity": "blocking"
+          },
+          {
+            "quote": "Query: the step of answering a question.",
+            "why": "Term \"query\" is not explained here",
+            "severity": "blocking"
+          }
+        ],
+        "ravi_explains_it": "RAG is like a student who first looks in a book to find the right paragraph and then writes the answer. The computer first searches for small pieces of text that match the question and then uses those pieces to answer. It does not change what the computer already knows.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 781,
+        "flesch_reading_ease": 70.8,
+        "avg_sentence_words": 12.1
+      },
+      "verdict": "REJECT",
+      "changes": {
+        "fixed": [],
+        "still_failing": [
+          "J5"
+        ],
+        "newly_failing": [
+          "D8"
+        ],
+        "lines_added": 64,
+        "lines_removed": 86,
+        "stats_before": {
+          "words": 1099,
+          "flesch_reading_ease": 77.2,
+          "avg_sentence_words": 8.3
+        },
+        "stats_after": {
+          "words": 781,
+          "flesch_reading_ease": 70.8,
+          "avg_sentence_words": 12.1
+        },
+        "offending_text": [
+          {
+            "check": "J5",
+            "quote": "Intro to Retrieval-Augmented Generation (RAG)",
+            "now": "STILL PRESENT"
+          },
+          {
+            "check": "J5",
+            "quote": "What Is Retrieval-Augmented Generation (RAG)?",
+            "now": "STILL PRESENT"
+          },
+          {
+            "check": "J5",
+            "quote": "Retrieval-Augmented Generation** is a method for AI.",
+            "now": "removed/rewritten"
+          },
+          {
+            "check": "J5",
+            "quote": "Without RAG, the student writes from memory.",
+            "now": "removed/rewritten"
+          }
+        ]
+      }
+    }
+  ]
+}

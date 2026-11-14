@@ -76,6 +76,9 @@ def write_outputs(state: dict) -> Path:
     slim["attempts"] = [{k: v for k, v in x.items() if k != "lesson"} for x in state["history"]]
     (d / "run.json").write_text(json.dumps(slim, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
     latest = config.OUTPUTS_DIR / "latest"
-    shutil.rmtree(latest, ignore_errors=True)
-    shutil.copytree(d, latest)
+    try:  # OneDrive/Windows can lock folders, so overwrite in place instead of delete+copy
+        shutil.rmtree(latest / "attempts", ignore_errors=True)
+        shutil.copytree(d, latest, dirs_exist_ok=True)
+    except OSError as e:
+        print(f"  [warn] could not refresh outputs/latest ({e}); results are in {d}")
     return d

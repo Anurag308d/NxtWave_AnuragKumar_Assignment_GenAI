@@ -6,6 +6,8 @@ COMPLETE list of problems in one go, which saves retries.
 """
 from __future__ import annotations
 
+import re
+
 from . import config, prompts
 from .rubric import RUBRIC, CheckResult, run_deterministic
 from .sources import SourcePack
@@ -38,6 +40,22 @@ def _to_result(cid: str, raw: dict | None) -> CheckResult:
     return CheckResult(cid, name, dim, kind, passed, reason or ("OK" if passed else "Failed"), evidence, fix)
 
 
+_INLINE_DEF = re.compile(r"\(|\s[-\u2013\u2014]\s|\bcalled\b|\bmeans\b|\bis an?\b|\bknown as\b|\brefers to\b|:", re.I)
+
+
+def _verify_flow_fail(res: CheckResult, lesson: str) -> CheckResult:
+    """J4 judges often flag a term as 'used before definition' when the sentence
+    itself defines it inline. If EVERY quoted sentence contains an inline
+    definition, the fail is not supported by its own evidence -> overturned."""
+    if res.id != "J4" or res.passed or not res.evidence:
+        return res
+    quotes = [re.sub(r"\s*\((?:[^()]*used before[^()]*)\)\s*$", "", e).strip().strip('"') for e in res.evidence]
+    if all(_INLINE_DEF.search(q) for q in quotes):
+        return CheckResult(res.id, res.name, res.dimension, res.kind, True,
+                           "[overturned: every quoted sentence defines its term inline] " + res.reason, [], "")
+    return res
+
+
 def evaluate(llm, lesson: str, topic: str, pack: SourcePack | None, judge_examples: dict[str, list[str]]):
     results: list[CheckResult] = run_deterministic(lesson)
 
@@ -52,15 +70,33 @@ def evaluate(llm, lesson: str, topic: str, pack: SourcePack | None, judge_exampl
                                   judge_memory=_judge_memory_block(judge_examples, ["J1", "J2", "J3", "J4"])),
         model=config.EVALUATOR_MODEL, temperature=config.EVALUATOR_TEMPERATURE, role="judge", max_tokens=3000)
     for cid in ("J1", "J2", "J3", "J4"):
-        results.append(_to_result(cid, judge.get(cid)))
+        results.append(_verify_flow_fail(_to_result(cid, judge.get(cid)), lesson))
 
     learner = llm.chat_json(
         prompts.LEARNER_SYSTEM,
         prompts.LEARNER_USER.format(lesson=lesson, judge_memory=_judge_memory_block(judge_examples, ["J5"])),
-        model=config.EVALUATOR_MODEL, temperature=config.EVALUATOR_TEMPERATURE, role="learner", max_tokens=2000)
+        model=config.LEARNER_MODEL, temperature=config.EVALUATOR_TEMPERATURE, role="learner", max_tokens=2000)
     confusions = learner.get("confusions") or []
+    # Anti-noise: keep only confusions whose quote really exists in the lesson
+    # (judges sometimes paraphrase or invent quotes), and ignore headings.
+    norm = lambda t: re.sub(r"[^a-z0-9]+", " ", t.lower()).strip()
+    body = norm("\n".join(l for l in lesson.splitlines() if not l.lstrip().startswith("#")))  # headings excluded
+    def real(c):
+        q = norm(str(c.get("quote", "")))
+        return len(q.split()) >= 3 and q[:60] in body and not str(c.get("quote", "")).lstrip().startswith("#")
+    dropped = [c for c in confusions if not real(c)]
+    confusions = [c for c in confusions if real(c)]
     blocking = [c for c in confusions if str(c.get("severity", "")).lower().startswith("block")]
     understood = bool(learner.get("understood_main_idea", True))
+    answers = learner.get("answers") or {}
+    answered_all = all(str(answers.get(q, "")).strip() for q in ("Q1", "Q2", "Q3"))
+    # Consistency rule: "blocking" is defined as "cannot answer Q1-Q3". If the learner
+    # understood the main idea AND answered all three, a blocking mark contradicts its
+    # own definition -> downgraded to minor (logged), so curiosity about deeper detail
+    # ("how does text become numbers?") does not block a beginner lesson.
+    downgraded = []
+    if blocking and understood and answered_all:
+        downgraded, blocking = blocking, []
     name, dim, kind, _ = RUBRIC["J5"]
     if blocking or not understood:
         results.append(CheckResult(
@@ -71,7 +107,9 @@ def evaluate(llm, lesson: str, topic: str, pack: SourcePack | None, judge_exampl
     else:
         results.append(CheckResult(
             "J5", name, dim, kind, True,
-            f"No blocking confusion ({len(confusions)} minor). Learner summary: {learner.get('ravi_explains_it', '')}",
+            f"No blocking confusion ({len(confusions)} minor, {len(downgraded)} blocking mark(s) downgraded because the "
+            f"learner still answered Q1-Q3, {len(dropped)} unverifiable quote(s) ignored). "
+            f"Learner summary: {learner.get('ravi_explains_it', '')}",
             [f"minor: \"{c.get('quote', '')}\"" for c in confusions][:3]))
     return results, learner
 

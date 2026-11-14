@@ -72,8 +72,12 @@ HARD_WORDS = [
     "subsequently", "thereby", "henceforth", "notwithstanding", "albeit", "ubiquitous",
     "holistic", "synergy", "endeavor", "endeavour", "commence", "ascertain", "pertaining",
     "elucidate", "delve", "intricate", "nuanced", "comprehensive", "methodology", "paramount",
-    "multifaceted", "encompass", "augmentative", "cognizant", "efficacy", "pivotal",
+    "multifaceted", "encompass", "augmentative", "cognizant", "efficacy", "pivotal", "manageable",
 ]
+
+# Advanced terms: too deep for a first lesson. The writer is told to AVOID them;
+# if they still appear they must be defined (D5) and usually trip J5 too.
+ADVANCED_TERMS = {"cosine similarity", "HNSW", "dense retrieval", "token", "weights", "context window"}
 
 # Technical terms that must be defined in the Key Words section if they are used.
 # canonical -> regex that detects use in the lesson body
@@ -193,6 +197,11 @@ def _r(cid, passed, reason, evidence=None, fix=""):
 
 def check_sections(md):
     missing = [k for k, p in SECTION_PATTERNS.items() if not re.search(p, md, re.I | re.M)]
+    h2 = [h.strip().lower() for h in re.findall(r"^##\s+(.+)$", md, re.M)]
+    dups = sorted({h for h in h2 if h2.count(h) > 1})
+    if dups:
+        return _r("D1", False, f"Duplicate section headings: {', '.join(dups)}", dups,
+                  "Each '## ' section must appear exactly once.")
     if missing:
         return _r("D1", False, f"Missing sections: {', '.join(missing)}", missing,
                   "Add the missing sections as '## ' headings in the required order.")
@@ -258,14 +267,16 @@ def check_jargon_defined(md):
 
 def check_acronyms(md):
     text = plain_text(md)
-    acrs = sorted({a for a in re.findall(r"\b[A-Z][A-Z0-9]{1,5}s?\b", text)} - ACRONYM_ALLOW)
+    acrs = sorted({a for a in re.findall(r"\b[A-Z]{2,6}s?\b", text)} - ACRONYM_ALLOW)  # letters only: skips codes like CS101
     missing = []
     for a in acrs:
         base = a[:-1] if a.endswith("s") and a[:-1].isupper() else a
         if base in ACRONYM_ALLOW:
             continue
         # expanded if "(RAG)" follows words, or "RAG (" / "RAG stands for" / "RAG means"
-        expanded = re.search(rf"\(\s*{base}s?\s*\)", md) or re.search(rf"\b{base}s?\b\s*(\(|stands for|means|is short for|:)", md)
+        suffix = r"(?:-\d+)?"  # e.g. COVID-19
+        expanded = (re.search(rf"\(\s*{base}s?{suffix}\s*\)", md)
+                    or re.search(rf"\b{base}s?{suffix}\b\s*(\(|stands for|means|is short for|:)", md))
         if not expanded:
             missing.append(base)
     missing = sorted(set(missing))
@@ -307,11 +318,25 @@ DETERMINISTIC_CHECKS = [check_sections, check_readability, check_sentence_length
                         check_jargon_defined, check_acronyms, check_examples, check_length, check_quiz]
 
 
+_UNICODE_FIX = str.maketrans({"\u2010": "-", "\u2011": "-", "\u2012": "-", "\u2013": "-", "\u2014": "-",
+                               "\u2212": "-", "\u00a0": " ", "\u202f": " ", "\u2018": "'", "\u2019": "'",
+                               "\u201c": '"', "\u201d": '"'})
+
+
+def normalize(md: str) -> str:
+    """LLMs often emit non-breaking hyphens/spaces and curly quotes. Normalise
+    them so regex checks do not produce false failures (found in a real run:
+    'COVID\u201119' was not recognised as an expanded acronym)."""
+    return md.translate(_UNICODE_FIX)
+
+
 def run_deterministic(md: str) -> list[CheckResult]:
+    md = normalize(md)
     return [fn(md) for fn in DETERMINISTIC_CHECKS]
 
 
 def lesson_stats(md: str) -> dict:
+    md = normalize(md)
     body = plain_text(md)
     sents = sentences(body)
     return {
@@ -319,3 +344,43 @@ def lesson_stats(md: str) -> dict:
         "flesch_reading_ease": round(flesch_reading_ease(plain_text(md, ("Check Yourself",))), 1),
         "avg_sentence_words": round(sum(len(s.split()) for s in sents) / max(1, len(sents)), 1),
     }
+
+
+def preflight_checklist() -> str:
+    """The deterministic rubric, shown to the WRITER before it writes ("shift left"):
+    cheaper to prevent a failure than to catch it and spend a retry."""
+    core = ", ".join(t for t in JARGON if t not in ADVANCED_TERMS)
+    avoid = ", ".join(sorted(ADVANCED_TERMS))
+    return (
+        "PRE-FLIGHT CHECKLIST (an automatic checker will verify every item; a single miss rejects the lesson):\n"
+        f"- Length: at least {config.MIN_WORDS + 200} words and at most {config.MAX_WORDS - 500} words. Count before you finish.\n"
+        f"- Core words: if you use any of these (or their forms), it MUST appear in '## Key Words' with a simple meaning: {core}.\n"
+        f"- Do NOT use these advanced words at all in a first lesson (they are not needed): {avoid}. "
+        "Do not explain the math behind embeddings or similarity; a simple analogy is enough.\n"
+        "- Every acronym (RAG, LLM, HR, ...) written in full the first time: 'Large Language Model (LLM)'. "
+        "Avoid acronyms that are not needed.\n"
+        f"- Never use: {', '.join(HARD_WORDS[:20])}.\n"
+        f"- Average sentence under {int(config.MAX_AVG_SENTENCE_WORDS) - 3} words; no sentence over {config.MAX_SENTENCE_WORDS - 7} words.\n"
+        "- Sections exactly as in the template, including '## A Full Example' and '## Check Yourself' "
+        f"with at least {config.MIN_QUIZ_QUESTIONS} questions, each followed by 'Answer: ...'.\n"
+    )
+
+
+def looks_degenerate(md: str) -> str | None:
+    """Detect broken model output (repetition loops, word-salad bolding).
+    This is an infrastructure failure, not a content failure, so the graph
+    re-samples instead of spending a content retry."""
+    md = normalize(md)
+    h2 = [h.strip().lower() for h in re.findall(r"^##\s+(.+)$", md, re.M)]
+    if any(h2.count(h) > 2 for h in h2):
+        return "same heading repeated 3+ times"
+    paras = [p.strip() for p in re.split(r"\n\s*\n", md) if len(p.strip()) > 40]
+    if paras and len(paras) - len(set(paras)) >= 3:
+        return "paragraphs repeated"
+    ws = words(plain_text(md))
+    bold = len(re.findall(r"\*\*[^*]+\*\*", md))
+    if ws and bold / len(ws) > 0.15:
+        return f"too much bold ({bold} bold spans / {len(ws)} words)"
+    if len(ws) < 300:
+        return f"too short ({len(ws)} words), likely truncated"
+    return None

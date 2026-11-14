@@ -20,6 +20,7 @@ flowchart TD
     P --> R[retrieve<br/>BM25 over curated source pack]
     R --> G[generate<br/>lesson draft]
     G -->|demo flag on, draft 1| I[inject_error<br/>plant a known mistake]
+    G -->|output guard: re-sample broken output| G
     G --> E
     I --> E[evaluate<br/>9 deterministic + 5 LLM checks]
     E -->|any FAIL and retries left| G2[regenerate<br/>failed checks + evidence fed back]
@@ -50,9 +51,22 @@ Max attempts = 1 + `MAX_RETRIES` (default 2), so the loop **always terminates**.
 | J2 | All 7 must-cover key points taught | covers key points | LLM judge |
 | J3 | Concrete running example + everyday analogy | teaches by example | LLM judge |
 | J4 | Nothing used before it is explained; logical order | coherent flow | LLM judge |
-| J5 | Simulated learner ("Ravi", Hindi-medium 12th pass) has no blocking confusion | beginner-friendly language | LLM learner persona |
+| J5 | Simulated learner ("Ravi", Hindi-medium 12th pass) has no blocking confusion | beginner-friendly language | LLM learner persona (different model family) |
 
-A lesson ships **only if all 14 pass**. An LLM fail is only accepted **with a quoted piece of evidence**;
+**Three different models, three roles** (auto-selected from what your Groq key offers; override in `.env`):
+
+| Role | Default | Why |
+|---|---|---|
+| Writer | `openai/gpt-oss-120b` | strongest writer available on Groq free tier |
+| Judge (J1–J4) | `openai/gpt-oss-20b` | separate model, temperature 0, must quote evidence |
+| Learner (J5) | `qwen/qwen3.8-27b` | different model family from the writer, so it does not share the writer's blind spots |
+
+`python main.py models` shows the models your key can use and the selected trio.
+
+A lesson ships **only if all 14 pass**. The writer also sees a **pre-flight checklist** generated from the
+deterministic rubric (jargon list, length, acronym rule) before it writes, because preventing a failure is cheaper than
+spending a retry on it. An **output guard** detects broken model output (repetition loops, word-salad bolding, truncation)
+and re-samples at a lower temperature; that is an infrastructure failure and does not consume a content retry. An LLM fail is only accepted **with a quoted piece of evidence**;
 a fail without evidence is overturned and logged (this cuts noisy, made-up rejections).
 
 ## 3. Setup
@@ -76,6 +90,8 @@ python main.py run                        # full loop on "Introduction to RAG"
 python main.py run --inject factual       # plant "RAG retrains the model" -> evaluator must catch it
 python main.py run --inject all           # factual + jargon + hard vocabulary errors
 python main.py memory                     # what the system has learned across runs
+python main.py rules                      # list learned rules (writer prompt evolution)
+python main.py rules --disable 7          # human retires a stale or harmful rule
 python main.py feedback D5 "Always define 'query' in Key Words"   # human feedback -> memory
 python main.py reset-memory
 streamlit run app.py                      # visual demo: live loop, rubric table, log, memory
@@ -96,16 +112,23 @@ Every run writes to `outputs/<run_id>/` (and a copy in `outputs/latest/`):
 
 `memory/memory.db` (SQLite) persists across runs:
 
-- **Generator side (prompts evolve):** when the same check has failed ≥ 2 times across runs, an LLM
+- **Generator side (prompts evolve):** when the same check has failed in ≥ 2 **different runs**, an LLM
   distils one short rule from the actual failure reasons, e.g. *"Re-read every bold term and make sure
   it is in Key Words"*. Active rules are injected into every future generation prompt. If a rule does not
-  stop the failures, it is re-distilled into v2, v3 …
+  stop the failures in later runs, it is re-distilled into v2, v3 …
 - **Evaluator side (rubric sharpens):** concrete past failures (with evidence) are shown to the judge as
   "this must fail", so it recognises real problems more consistently.
 - **Human feedback:** `python main.py feedback <check> "<rule>"` saves a reviewer's note as a rule.
 - **Clean learning:** attempts with a deliberately injected error are logged but **never learned from**.
 
-## 6. Project layout
+## 6. Results
+
+- **Final lesson:** [`final_lesson/RAG_lesson_final.md`](final_lesson/RAG_lesson_final.md), shipped by the pipeline
+  (14/14 checks, attempt 2) with one logged human review edit.
+- **Real run logs:** [`outputs/sample_runs/`](outputs/sample_runs/) has five real Groq runs, including the ones that
+  exposed evaluator bugs and how each was fixed (also summarised in docs/ARCHITECTURE.md).
+
+## 7. Project layout
 
 ```
 lesson_agent/
@@ -126,7 +149,7 @@ main.py          CLI
 tests/           offline tests
 ```
 
-## 7. Design decisions
+## 8. Design decisions
 
 See **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for why this structure, these components,
 this evaluator, and the trade-offs.

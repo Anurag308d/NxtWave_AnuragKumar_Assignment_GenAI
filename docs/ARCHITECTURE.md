@@ -48,22 +48,42 @@ Further choices:
 
 - **Hard pass/fail, no scores.** A score of 7.4/10 does not tell the writer what to fix. A failed check
   with a quote and a fix instruction does.
-- **Different model for judging** (`openai/gpt-oss-120b` judges `llama-3.3-70b` output). This reduces
-  self-preference bias. Both are configurable.
+- **Different models for writing, judging and learning**: `gpt-oss-120b` writes, `gpt-oss-20b` judges,
+  and `qwen3.8-27b` (a different model family) plays the learner. This reduces self-preference bias.
+  Models are auto-selected from what the API key offers, because Groq retires models often.
 - **Evidence or it did not happen.** An LLM fail without a quoted sentence is overturned and logged.
   This stops the loop wasting retries on vague or invented complaints.
 - **Temperature 0 for judging**, 0.6 for writing.
 - **All checks run every time** (no early exit), so a retry gets the complete list of problems at once.
+
+## What real runs taught me (and what I changed)
+
+The rejection logs in `outputs/sample_runs/` are the evidence. Each fix below came from reading a real log.
+
+| Observation in a real run | Root cause | Fix |
+|---|---|---|
+| D6 kept failing on "Coronavirus Disease 2019 (COVID‑19)" although it was expanded | LLM used a non-breaking hyphen (U+2011); my regex expected "-" | Unicode normalisation before all checks + regression test. The evaluator itself needs tests. |
+| J5 failed 3/3 attempts, even on sentences that explained the word | Learner persona flagged every new word, even headings | Recalibrated: a word explained in the same or next 2 sentences is not a problem; headings ignored; quotes must exist in the lesson; learner must answer 3 comprehension questions |
+| Retry 2 shrank the lesson to 781 words | Reviser over-trimmed while fixing | Length constraint added to the revise prompt |
+| Many D5/D6/D8 fails on draft 1 | Writer did not know the exact checks | Pre-flight checklist generated from the rubric itself |
+| Writer model (Qwen) fell into repetition loops and bolded every word | Model degeneration on long outputs | Output guard re-samples broken output; writer switched to gpt-oss-120b; Qwen moved to the learner role |
+| One bad run created 8 junk rules | Rules were promoted on attempt counts | Rules now need failures in ≥ 2 different runs; rule effectiveness tracked per run |
+| Judge missed "if the answer is not in your files, the model cannot invent it" | Not in the misconception list | Human reviewer added M08 + a human feedback rule; next run the judge caught "It does not guess" citing M08 |
+| Checklist listed advanced words; writer then used "cosine similarity", "HNSW" | Shift-left list read as a menu | Split into core terms (define if used) and advanced terms (do not use); embedding taught via a "meaning address" analogy (fact F32) |
+| J4 failed terms defined in the same sentence ("vector database (a special storage ...)") | Judge treated inline definitions as "used before defined" | Prompt clarified + code overturns a J4 fail when every quoted sentence defines its term inline (tested both ways) |
+| Learner marked "feels like magic" as blocking, yet answered all 3 comprehension questions | Learner contradicted its own definition of blocking | Consistency rule: understood + answered Q1-Q3 => blocking downgraded to minor (logged) |
+| A rule learned from the miscalibrated learner kept pushing math into the lesson | Stale rule from before recalibration; it was re-learned after retirement | `main.py rules --disable ID` lets a human retire a rule; only failures after retirement can re-create it |
+| Shipped lesson stated invented rules of a real railway | No check covers real-world facts outside the source pack | Human edit in the final doc + J1 now fails invented facts about real organisations |
 
 ## Memory and self-evolution
 
 SQLite, one file, zero setup, survives across runs.
 
 1. Every check result of every attempt is stored (`check_events`).
-2. **Prompt evolution:** when a check has failed ≥ `RULE_PROMOTION_THRESHOLD` times across runs, an
+2. **Prompt evolution:** when a check has failed in ≥ `RULE_PROMOTION_THRESHOLD` different runs, an
    LLM distils one short, specific rule from the real failure reasons. Active rules go into every
    future generation prompt. The system tracks failures after each rule was created; if a rule is not
-   working it is rewritten (v2, v3). Rules are capped at 12 so the prompt does not grow forever.
+   working in later runs it is rewritten (v2, v3). Rules are capped at 12 so the prompt does not grow forever.
 3. **Rubric sharpening:** concrete past failures with evidence are shown to the judge as
    "problems like these must fail", which makes judging more consistent across runs.
 4. **Human feedback** becomes a rule the same way (`main.py feedback`).

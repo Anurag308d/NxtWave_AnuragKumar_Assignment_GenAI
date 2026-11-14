@@ -8,13 +8,15 @@ ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
 # ---- Models (Groq) ----------------------------------------------------------
-# Generator and evaluator use DIFFERENT models on purpose, so the system is not
-# grading its own homework with the same blind spots.
+# Writer, judge and simulated learner are DIFFERENT models on purpose, so the
+# system is not grading its own homework with the same blind spots.
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GENERATOR_MODEL = os.getenv("GENERATOR_MODEL", "llama-3.3-70b-versatile")
-EVALUATOR_MODEL = os.getenv("EVALUATOR_MODEL", "openai/gpt-oss-120b")
+GENERATOR_MODEL = os.getenv("GENERATOR_MODEL", "openai/gpt-oss-120b")
+EVALUATOR_MODEL = os.getenv("EVALUATOR_MODEL", "openai/gpt-oss-20b")
+# The simulated learner uses a model from a DIFFERENT family than the writer.
+LEARNER_MODEL = os.getenv("LEARNER_MODEL", "qwen")  # resolved to the exact Qwen id on your key
 # Used automatically if a configured model is unavailable on the account.
-FALLBACK_MODEL = os.getenv("FALLBACK_MODEL", "llama-3.1-8b-instant")
+FALLBACK_MODEL = os.getenv("FALLBACK_MODEL", "openai/gpt-oss-20b")
 
 GENERATOR_TEMPERATURE = float(os.getenv("GENERATOR_TEMPERATURE", "0.6"))
 EVALUATOR_TEMPERATURE = 0.0  # judges must be as deterministic as possible

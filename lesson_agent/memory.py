@@ -48,6 +48,9 @@ class Memory:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self._db() as db:
             db.executescript(SCHEMA)
+            cols = {r["name"] for r in db.execute("PRAGMA table_info(learned_rules)")}
+            if "retired_ts" not in cols:  # migrate older memory files
+                db.execute("ALTER TABLE learned_rules ADD COLUMN retired_ts REAL")
 
     @contextmanager
     def _db(self):
@@ -77,7 +80,9 @@ class Memory:
 
     def failure_counts(self) -> dict[str, int]:
         with self._db() as db:
-            rows = db.execute("SELECT check_id, COUNT(*) n FROM check_events WHERE passed=0 AND injected=0 GROUP BY check_id").fetchall()
+            # count DISTINCT RUNS where the check failed, so one bad run cannot create rules on its own
+            rows = db.execute("SELECT check_id, COUNT(DISTINCT run_id) n FROM check_events WHERE passed=0 AND injected=0 "
+                              "GROUP BY check_id").fetchall()
         return {r["check_id"]: r["n"] for r in rows}
 
     def recent_failure_reasons(self, check_id: str, limit: int = 6) -> list[str]:
@@ -109,11 +114,15 @@ class Memory:
                 return
             for r in results:
                 if not r["passed"]:
-                    db.execute("UPDATE learned_rules SET fails_since_created = fails_since_created + 1 "
-                               "WHERE active=1 AND check_id=?", (r["id"],))
                     if r["kind"] == "llm" and r.get("evidence"):
                         db.execute("INSERT INTO judge_examples(check_id, example, ts) VALUES (?,?,?)",
                                    (r["id"], f"{r['reason']} Evidence: {'; '.join(r['evidence'])[:400]}", now))
+
+    def mark_rule_failures(self, check_ids: list[str]) -> None:
+        """Called once per run: a rule 'failed' if its check still failed somewhere in this run."""
+        with self._db() as db:
+            db.executemany("UPDATE learned_rules SET fails_since_created = fails_since_created + 1 "
+                           "WHERE active=1 AND check_id=?", [(c,) for c in check_ids])
 
     def mark_rules_applied(self, rule_ids: list[int]) -> None:
         if not rule_ids:
@@ -143,6 +152,13 @@ class Memory:
         auto rule did not stop the failures (so it should be rewritten)."""
         counts = self.failure_counts()
         active = {r["check_id"]: r for r in self.active_rules()}
+        with self._db() as db:
+            retired = {r["check_id"]: r["t"] for r in db.execute(
+                "SELECT check_id, MAX(retired_ts) t FROM learned_rules WHERE retired_ts IS NOT NULL GROUP BY check_id")}
+            for cid, t in retired.items():
+                # a human retired a rule for this check: only failures AFTER that count again
+                counts[cid] = db.execute("SELECT COUNT(DISTINCT run_id) FROM check_events WHERE check_id=? AND passed=0 "
+                                         "AND injected=0 AND ts>?", (cid, t)).fetchone()[0]
         need = []
         for cid, n in counts.items():
             if n < config.RULE_PROMOTION_THRESHOLD:
@@ -150,9 +166,21 @@ class Memory:
             rule = active.get(cid)
             if rule is None:
                 need.append(cid)
-            elif rule["source"] == "auto" and rule["fails_since_created"] >= config.RULE_PROMOTION_THRESHOLD + 1:
+            elif rule["source"] == "auto" and rule["fails_since_created"] >= config.RULE_PROMOTION_THRESHOLD:
                 need.append(cid)  # rule is not working -> re-distil (v2, v3 ...)
         return need
+
+    def all_rules(self) -> list[dict]:
+        with self._db() as db:
+            return [dict(r) for r in db.execute("SELECT * FROM learned_rules ORDER BY id")]
+
+    def set_rule_active(self, rule_id: int, active: bool) -> bool:
+        """Human control over the self-evolving prompt: retire a stale or harmful
+        rule (e.g. one learned before the rubric was recalibrated)."""
+        with self._db() as db:
+            cur = db.execute("UPDATE learned_rules SET active=?, retired_ts=? WHERE id=?",
+                             (int(active), None if active else time.time(), rule_id))
+            return cur.rowcount > 0
 
     def reset(self) -> None:
         self.path.unlink(missing_ok=True)

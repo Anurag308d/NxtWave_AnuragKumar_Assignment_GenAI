@@ -41,6 +41,7 @@ F27 | limits | If the knowledge source has wrong or outdated documents, a RAG sy
 F28 | limits | RAG adds extra steps (searching before answering), so it can be a little slower and needs extra setup such as a vector database.
 F29 | uses | Common uses of RAG: customer support chatbots that answer from company help pages, chatbots that answer questions about a college or company's own documents, search assistants that answer from latest news or web pages, and assistants for doctors, lawyers or engineers that answer from their reference documents.
 F30 | compare | RAG is different from fine-tuning. Fine-tuning changes the model's weights by training it more on new data. RAG keeps the model the same and gives it relevant information at the time of the question. They can also be used together.
+F32 | analogy | A simple way to explain embeddings to a beginner: a special AI model reads a piece of text and gives it a list of numbers, like a meaning address (similar to a PIN code for meaning). Texts about similar things get nearby addresses, so the computer can find text with a similar meaning by finding nearby addresses. Beginners do not need the math behind it.
 F31 | analogy | A common analogy: an LLM without RAG is like a student writing a closed-book exam from memory; an LLM with RAG is like a student in an open-book exam who first looks up the right page in the book and then writes the answer.
 
 ## Common misconceptions (the evaluator treats these as factual errors)
@@ -52,6 +53,7 @@ M04 | RAG searches the whole internet by default. (False: it searches whatever k
 M05 | The vector database itself writes the answer. (False: the LLM writes the answer; the database only stores and finds chunks, see F17, F20)
 M06 | Embeddings are encrypted text / embeddings are the same as keywords. (False: embeddings are lists of numbers that capture meaning, see F16)
 M07 | The whole document collection is always given to the model at once. (False: only the top relevant chunks are given, see F23)
+M08 | If the answer is not in the documents, the model cannot make one up / RAG means the AI never guesses. (False: the model may still guess or hallucinate when retrieval finds nothing useful, see F08, F26)
 
 ## Must-cover key points (the evaluator checks coverage of each)
 

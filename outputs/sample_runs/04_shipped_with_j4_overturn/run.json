@@ -1,0 +1,786 @@
+{
+  "run_id": "20261114-101121-715e",
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+  "inject_mode": null,
+  "status": "shipped",
+  "plan": {
+    "title": "Introduction to Retrieval‑Augmented Generation (RAG)",
+    "analogy": "Like going to a librarian (search) to fetch the right book (information) and then writing a summary (answer) for you, without the librarian having to learn new books each time.",
+    "running_example": "A student asks: “What are the latest IIT admission rules for 2025?” The system looks at three documents – the official IIT 2025 admission PDF, a recent news article on changes, and a FAQ page from the IIT website – and uses their relevant parts to answer.",
+    "sections": [
+      {
+        "title": "Before We Start",
+        "goal": "Know what you will learn and why it helps start an AI career",
+        "points": [
+          "You will learn what RAG means and how it works step by step",
+          "You will see why it is useful for getting up‑to‑date and private answers",
+          "Understanding RAG opens doors to many AI jobs that need reliable information"
+        ]
+      },
+      {
+        "title": "What Is RAG?",
+        "goal": "Get a simple definition and remember it through an everyday analogy",
+        "points": [
+          "RAG = Retrieval‑Augmented Generation: first fetch relevant info, then let a language model generate the answer",
+          "Analogy: ask a librarian for the right book, read the needed pages, then write a reply"
+        ]
+      },
+      {
+        "title": "Why Does It Matter?",
+        "goal": "Understand the problem RAG solves and its benefits",
+        "points": [
+          "LLMs only know what they were trained on – they stop learning after a certain date (knowledge cutoff)",
+          "They cannot see your private documents and may make up facts (hallucinations)",
+          "RAG lets the model use fresh public or private data without retraining",
+          "Answers become more accurate, up‑to‑date, and can show the source documents"
+        ]
+      },
+      {
+        "title": "How Does It Work?",
+        "goal": "Follow the two main phases of RAG using the running example",
+        "points": [
+          "**Indexing phase** – split each document into small pieces (chunks), turn each chunk into a numeric vector (embedding), and store vectors in a vector database",
+          "**Query phase** – turn the user question into a vector, find the most similar chunks, attach those chunks to the prompt, and let the LLM generate the final answer",
+          "The model itself is unchanged – only the prompt changes"
+        ]
+      },
+      {
+        "title": "A Full Example",
+        "goal": "See the complete flow from question to answer on a fresh query",
+        "points": [
+          "Question: “What are the latest IIT admission rules for 2025?”",
+          "Step 1: Question is embedded",
+          "Step 2: Vector DB returns three most similar chunks from the PDF, news article, and FAQ",
+          "Step 3: Those chunks are added to the prompt like: “Use these documents to answer the question”",
+          "Step 4: LLM writes a concise answer and lists the source titles"
+        ]
+      },
+      {
+        "title": "Where Is It Used?",
+        "goal": "Identify real‑world applications and a limitation",
+        "points": [
+          "Customer support bots that pull the latest policy documents",
+          "Enterprise search that answers questions from internal reports",
+          "Educational tools that give up‑to‑date textbook answers",
+          "Limitation: If the retrieved chunks are irrelevant or missing, the answer can still be wrong"
+        ]
+      },
+      {
+        "title": "Key Words",
+        "goal": "Learn simple meanings of technical terms",
+        "points": [
+          "**RAG**: method that first searches for info then writes an answer",
+          "**LLM**: a big language model that can generate text",
+          "**Knowledge cutoff**: the date after which the model has no new information",
+          "**Hallucination**: when the model makes up facts",
+          "**Chunking**: breaking a long document into small pieces",
+          "**Embedding**: turning text into numbers that capture meaning",
+          "**Vector database**: a storage that can quickly find similar‑meaning pieces",
+          "**Prompt**: the text you give the model to guide its answer",
+          "**Fine‑tuning**: training a model again on new data (not needed for RAG)"
+        ]
+      },
+      {
+        "title": "Quick Recap",
+        "goal": "Recall the main ideas in short bullets",
+        "points": [
+          "RAG = retrieve then generate",
+          "Helps LLMs give up‑to‑date, private, and sourced answers",
+          "Two phases: indexing (chunk → embed → store) and query (search → prompt → generate)",
+          "The LLM itself is not retrained",
+          "One limitation: quality depends on good retrieval"
+        ]
+      },
+      {
+        "title": "Check Yourself",
+        "goal": "Test your understanding with short answers",
+        "points": [
+          "1. What does RAG stand for? Answer: Retrieval‑Augmented Generation",
+          "2. Why do we need RAG for recent facts? Answer: Because LLMs stop learning after their knowledge cutoff",
+          "3. Name one step in the indexing phase. Answer: Chunking the documents",
+          "4. What is a hallucination in AI? Answer: When the model invents information that isn’t true",
+          "5. Give one real‑world use of RAG. Answer: Customer‑support bot that uses the latest policy documents"
+        ]
+      }
+    ],
+    "terms_to_define": [
+      "RAG",
+      "LLM",
+      "knowledge cutoff",
+      "hallucination",
+      "chunking",
+      "embedding",
+      "vector database",
+      "prompt",
+      "fine‑tuning"
+    ]
+  },
+  "rules": [
+    {
+      "id": 6,
+      "check_id": "J4",
+      "rule": "Define each new term before using it, with a brief example.",
+      "source": "auto",
+      "active": 1,
+      "version": 1,
+      "created_ts": 1794576305.0330331,
+      "times_applied": 0,
+      "fails_since_created": 0
+    },
+    {
+      "id": 5,
+      "check_id": "D6",
+      "rule": "Ensure each acronym appears in full form at least once, e.g., write 'Database (DB)' before using the abbreviation.",
+      "source": "auto",
+      "active": 1,
+      "version": 2,
+      "created_ts": 1794576303.4694507,
+      "times_applied": 0,
+      "fails_since_created": 0
+    },
+    {
+      "id": 4,
+      "check_id": "D8",
+      "rule": "Write a lesson between 900 and 2300 words.",
+      "source": "auto",
+      "active": 1,
+      "version": 1,
+      "created_ts": 1794562076.0883021,
+      "times_applied": 1,
+      "fails_since_created": 1
+    },
+    {
+      "id": 1,
+      "check_id": "J1",
+      "rule": "Never claim the model cannot make things up when the documents lack the answer. Say it may still guess, so good documents and good search matter.",
+      "source": "human",
+      "active": 1,
+      "version": 1,
+      "created_ts": 1794561504.7963781,
+      "times_applied": 4,
+      "fails_since_created": 1
+    }
+  ],
+  "new_rules": [
+    {
+      "check_id": "J5",
+      "rule": "Explain the word-to-number conversion step-by-step, using a simple analogy (e.g., mapping words to coordinates on a grid) and avoid abstract terms like 'embedding' without context."
+    }
+  ],
+  "events": [
+    "10:11:21 [memory] 4 learned rule(s) loaded for the generator; 7 past failure example(s) loaded for the evaluator",
+    "10:11:25 [plan] 'Introduction to Retrieval‑Augmented Generation (RAG)' with 9 sections; analogy: Like going to a librarian (search) to fetch the right book (information) and the",
+    "10:11:25 [retrieve] 24 distinct source facts retrieved across 9 sections (BM25)",
+    "10:11:30 [generate] attempt 1: 932 words",
+    "10:11:34 [evaluate] attempt 1: 12/14 checks passed -> REJECTED (D6, J5)",
+    "10:12:23 [regenerate (retry 1/2)] attempt 2: 968 words",
+    "10:12:27 [evaluate] attempt 2: 13/14 checks passed -> REJECTED (J5)",
+    "10:13:17 [regenerate (retry 2/2)] attempt 3: 983 words",
+    "10:13:22 [evaluate] attempt 3: 14/14 checks passed -> PASSED",
+    "10:13:22 [ship] lesson passed all 14 checks on attempt 3",
+    "10:13:34 [learn] 1 new rule(s) learned from repeated failures\n      + (J5) Explain the word-to-number conversion step-by-step, using a simple analogy (e.g., mapping words to coordinates on a grid) and avoid abstract terms like 'embedding' without context."
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 66.7.",
+          "evidence": [
+            "score=66.7"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 11.5 words; none too long.",
+          "evidence": [
+            "avg=11.5"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Every technical term used is defined in Key Words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": false,
+          "reason": "Acronyms never written in full: IIT, JEE",
+          "evidence": [
+            "IIT",
+            "JEE"
+          ],
+          "fix": "Write each acronym in full the first time, e.g. 'Large Language Model (LLM)'."
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 4 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "932 words.",
+          "evidence": [
+            "words=932"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 3 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All statements are factually accurate and do not contradict source facts or misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All key points K1-K7 are covered in the lesson.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "Lesson includes a concrete running example, everyday analogy, and Indian context.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All terms are defined before use and the flow is logical.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Simulated learner got stuck 1 time(s) (blocking). Main idea understood: True.",
+          "evidence": [
+            "\"a special AI model reads each chunk and creates a list of numbers, called an embedding. Think of it as a “meaning address”. Similar chunks get nearby addresses.\" -> Ravi does not know how a piece of text becomes a list of numbers. It feels like magic. He does not understand the process of turning meaning into numbers, so he is stuck on how the computer 'knows' the meaning."
+          ],
+          "fix": "Rewrite each quoted sentence in simpler words and explain the missing idea before using it."
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "a special AI model reads each chunk and creates a list of numbers, called an embedding. Think of it as a “meaning address”. Similar chunks get nearby addresses.",
+            "why": "Ravi does not know how a piece of text becomes a list of numbers. It feels like magic. He does not understand the process of turning meaning into numbers, so he is stuck on how the computer 'knows' the meaning.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "the vector database finds the chunks whose embeddings are close to the question embedding",
+            "why": "Ravi does not know what 'close' means for numbers. He thinks numbers are just for counting. He does not understand how a list of numbers can be 'close' to another list to find similar meaning.",
+            "severity": "blocking"
+          }
+        ],
+        "answers": {
+          "Q1": "RAG is a method where the computer first finds useful text from a library of documents and then uses that text to write the answer.",
+          "Q2": "We need it because the AI model only knows things up to a certain date (knowledge cutoff) and sometimes makes up false facts (hallucination). RAG helps it use fresh and private information.",
+          "Q3": "When a user asks, the system turns the question into a 'meaning address' (embedding), finds similar pieces of text in the database, puts them with the question in a prompt, and then the AI writes the answer based on that text."
+        },
+        "ravi_explains_it": "RAG is like going to a library. You don't memorize every book. You ask the librarian for the right pages, read them, and then write your answer. The AI does the same: it finds the right pages first, then writes the answer.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 932,
+        "flesch_reading_ease": 66.7,
+        "avg_sentence_words": 11.5
+      },
+      "verdict": "REJECT"
+    },
+    {
+      "attempt": 2,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 65.4.",
+          "evidence": [
+            "score=65.4"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 11.7 words; none too long.",
+          "evidence": [
+            "avg=11.7"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Every technical term used is defined in Key Words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All acronyms are expanded.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 4 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "968 words.",
+          "evidence": [
+            "words=968"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 3 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All statements are factually accurate and do not contradict source facts or known misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All required key points K1–K7 are explicitly covered in the lesson.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "Lesson includes an everyday analogy (student with textbook), a concrete running example (IIT admission rules), and uses Indian context (IIT, JEE).",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "[overturned: every quoted sentence defines its term inline] The terms \"vector database\" and \"prompt\" are used before they are defined. They are only explained later in the Key Words section, violating the flow rule.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": false,
+          "reason": "Simulated learner got stuck 1 time(s) (blocking). Main idea understood: True.",
+          "evidence": [
+            "\"a small AI model looks at the words in a chunk and turns them into a list of numbers.\" -> Ravi does not know how a computer turns words into numbers. It feels like magic. He understands that it is a 'meaning code' but not how the code is made, so he is stuck on the process."
+          ],
+          "fix": "Rewrite each quoted sentence in simpler words and explain the missing idea before using it."
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "a small AI model looks at the words in a chunk and turns them into a list of numbers.",
+            "why": "Ravi does not know how a computer turns words into numbers. It feels like magic. He understands that it is a 'meaning code' but not how the code is made, so he is stuck on the process.",
+            "severity": "blocking"
+          },
+          {
+            "quote": "The database can quickly find codes that are close in meaning.",
+            "why": "Ravi does not know how a computer measures if two lists of numbers are 'close'. He knows they are similar, but the method is not explained simply.",
+            "severity": "minor"
+          }
+        ],
+        "answers": {
+          "Q1": "RAG is a way for a computer to first find useful text (retrieve) and then write an answer (generate). It is like a student opening a textbook during an exam to find the right page before writing.",
+          "Q2": "We need it because AI models only know things up to a certain date (knowledge cutoff) and sometimes make up false facts (hallucination). RAG helps them use fresh or private information to give true answers.",
+          "Q3": "When a user asks, the question is turned into a meaning code. The system finds similar codes in the database, adds those texts to the question, and the AI writes the answer using only that information."
+        },
+        "ravi_explains_it": "RAG is like giving the AI a book to read before it answers. It finds the right pages, reads them, and then writes the answer. This stops it from making up lies or forgetting new news.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 968,
+        "flesch_reading_ease": 65.4,
+        "avg_sentence_words": 11.7
+      },
+      "verdict": "REJECT",
+      "changes": {
+        "fixed": [
+          "D6"
+        ],
+        "still_failing": [
+          "J5"
+        ],
+        "newly_failing": [],
+        "lines_added": 54,
+        "lines_removed": 46,
+        "stats_before": {
+          "words": 932,
+          "flesch_reading_ease": 66.7,
+          "avg_sentence_words": 11.5
+        },
+        "stats_after": {
+          "words": 968,
+          "flesch_reading_ease": 65.4,
+          "avg_sentence_words": 11.7
+        },
+        "offending_text": [
+          {
+            "check": "J5",
+            "quote": "a special AI model reads each chunk and creates a list of numbers, called an embedding. Think of it as a “meaning address”. Similar chunks get nearby addresses.",
+            "now": "removed/rewritten"
+          }
+        ]
+      }
+    },
+    {
+      "attempt": 3,
+      "results": [
+        {
+          "id": "D1",
+          "name": "Required sections present",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All 7 required sections present.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D2",
+          "name": "Readability (Flesch >= 60)",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Flesch Reading Ease = 64.3.",
+          "evidence": [
+            "score=64.3"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D3",
+          "name": "Short sentences",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Average sentence 11.8 words; none too long.",
+          "evidence": [
+            "avg=11.8"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D4",
+          "name": "No hard / fancy words",
+          "dimension": "beginner-friendly language",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "No banned hard words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D5",
+          "name": "Every technical term is in Key Words",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Every technical term used is defined in Key Words.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D6",
+          "name": "Acronyms expanded",
+          "dimension": "clear, no unexplained jargon",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "All acronyms are expanded.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D7",
+          "name": "Enough examples",
+          "dimension": "teaches by example",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Example section present; 4 example/analogy markers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "D8",
+          "name": "Length in range",
+          "dimension": "covers the key points",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "983 words.",
+          "evidence": [
+            "words=983"
+          ],
+          "fix": ""
+        },
+        {
+          "id": "D9",
+          "name": "Self-check quiz",
+          "dimension": "coherent teaching flow",
+          "kind": "deterministic",
+          "passed": true,
+          "reason": "Quiz has 3 questions with answers.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J1",
+          "name": "Factually accurate and grounded",
+          "dimension": "accurate & grounded",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All statements are consistent with source facts and do not contain known misconceptions.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J2",
+          "name": "Covers all key points",
+          "dimension": "covers the key points",
+          "kind": "llm",
+          "passed": true,
+          "reason": "All required key points K1–K7 are explicitly covered in the lesson.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J3",
+          "name": "Teaches through concrete examples",
+          "dimension": "teaches by example",
+          "kind": "llm",
+          "passed": true,
+          "reason": "The lesson includes an everyday analogy (student with textbook), a concrete running example (IIT admission rules), and uses Indian context (IIT, JEE).",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J4",
+          "name": "Coherent teaching flow",
+          "dimension": "coherent teaching flow",
+          "kind": "llm",
+          "passed": true,
+          "reason": "[overturned: every quoted sentence defines its term inline] The terms \"vector database\" and \"prompt\" are used before they are defined in the Key Words section, creating a logical jump for beginners.",
+          "evidence": [],
+          "fix": ""
+        },
+        {
+          "id": "J5",
+          "name": "Beginner learner understands it",
+          "dimension": "beginner-friendly language",
+          "kind": "llm",
+          "passed": true,
+          "reason": "No blocking confusion (2 minor, 0 unverifiable quote(s) ignored). Learner summary: So, RAG is like giving the AI a library to look up before it answers. First, we put all our documents into a special database where they are sorted by meaning. When you ask a question, the AI finds the most similar parts of those documents and uses them to write a true answer, instead of just guessing from its old memory.",
+          "evidence": [
+            "minor: \"a small AI model reads the words in a chunk and creates a meaning code.\"",
+            "minor: \"The model also cannot see private papers unless we give them.\""
+          ],
+          "fix": ""
+        }
+      ],
+      "learner": {
+        "confusions": [
+          {
+            "quote": "a small AI model reads the words in a chunk and creates a meaning code.",
+            "why": "Ravi does not know how a computer turns words into numbers. It feels like magic. He understands that it becomes a list of numbers, but he is stuck on the process of how the meaning is captured.",
+            "severity": "minor"
+          },
+          {
+            "quote": "The model also cannot see private papers unless we give them.",
+            "why": "The word 'private papers' is a bit confusing. Ravi thinks of 'papers' as exam sheets. He has to guess that it means 'documents' or 'files'.",
+            "severity": "minor"
+          }
+        ],
+        "answers": {
+          "Q1": "RAG is a way for a computer to first find useful text (retrieve) and then write an answer (generate). It is like a student opening a textbook during an exam to find the right page before writing the answer.",
+          "Q2": "We need it because the AI (LLM) only knows things up to a certain date (knowledge cutoff). It does not know new facts. Also, sometimes the AI makes up false facts (hallucination). RAG helps it use fresh or private information so the answer is correct and we can see the source.",
+          "Q3": "When a user asks a question, the system first turns the question into a 'meaning code' (embedding). Then it looks in the database for text pieces (chunks) that have similar codes. It adds those found pieces to the question (prompt) and gives it to the AI. The AI then reads this and writes the final answer."
+        },
+        "ravi_explains_it": "So, RAG is like giving the AI a library to look up before it answers. First, we put all our documents into a special database where they are sorted by meaning. When you ask a question, the AI finds the most similar parts of those documents and uses them to write a true answer, instead of just guessing from its old memory.",
+        "understood_main_idea": true
+      },
+      "planted": [],
+      "stats": {
+        "words": 983,
+        "flesch_reading_ease": 64.3,
+        "avg_sentence_words": 11.8
+      },
+      "verdict": "PASS",
+      "changes": {
+        "fixed": [
+          "J5"
+        ],
+        "still_failing": [],
+        "newly_failing": [],
+        "lines_added": 20,
+        "lines_removed": 18,
+        "stats_before": {
+          "words": 968,
+          "flesch_reading_ease": 65.4,
+          "avg_sentence_words": 11.7
+        },
+        "stats_after": {
+          "words": 983,
+          "flesch_reading_ease": 64.3,
+          "avg_sentence_words": 11.8
+        },
+        "offending_text": [
+          {
+            "check": "J5",
+            "quote": "a small AI model looks at the words in a chunk and turns them into a list of numbers.",
+            "now": "removed/rewritten"
+          }
+        ]
+      }
+    }
+  ]
+}

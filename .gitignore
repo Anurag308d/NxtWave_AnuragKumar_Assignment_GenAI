@@ -1,9 +1,10 @@
 .env
+.venv/
+venv/
 __pycache__/
 *.pyc
 .pytest_cache/
-.venv/
-venv/
+_to_delete/
 memory/*.db
 outputs/*
 !outputs/.gitkeep

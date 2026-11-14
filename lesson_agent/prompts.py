@@ -83,8 +83,9 @@ COMMON MISCONCEPTIONS (never say these):
 
 {template}
 
+{checklist}
 {learned_rules}
-Length: 1100-1700 words. Output ONLY the lesson markdown."""
+Length: 1200-1700 words. Output ONLY the lesson markdown."""
 
 REVISE_USER = """\
 Your previous lesson on "{topic}" was REJECTED by the quality checker.
@@ -105,7 +106,10 @@ COMMON MISCONCEPTIONS (never say these):
 
 {template}
 
+{checklist}
 {learned_rules}
+Keep the lesson between 1200 and 1700 words. Do not make it shorter while fixing problems.
+
 PREVIOUS LESSON:
 <<<
 {lesson}
@@ -137,12 +141,19 @@ CHECKS:
 J1 Factually accurate and grounded: FAIL if any sentence is false, contradicts a source fact, states a
    known misconception, or makes a confident claim that the facts do not support. Quote each wrong
    sentence and give the fact/misconception ID it conflicts with.
+   ALSO FAIL J1 if an example states specific rules, numbers or decisions of a REAL organisation
+   (a real railway, exam board, government body, company) as fact, unless the lesson clearly says the
+   example documents are imaginary. Example content must never teach false real-world facts.
 J2 Covers all key points: FAIL if any K-point is missing or only hinted at. List the missing K IDs.
 J3 Teaches through concrete examples: PASS only if (a) one concrete running example walks through the
    actual steps of how it works, (b) there is an everyday analogy, and (c) examples fit an Indian
    beginner. Quote what is missing or weak.
 J4 Coherent teaching flow: FAIL if a concept is used before it is explained, sections are out of logical
    order, an idea contradicts an earlier one, or there is a big jump a beginner cannot follow.
+   IMPORTANT: a term explained IN THE SAME SENTENCE (in brackets, after a dash, "called X", "X means ...")
+   or in the very next sentence counts as explained. That is good teaching, not a flow problem.
+   The Key Words section is a summary at the end; terms do NOT need to be defined there first.
+   Only fail J4 for a term that is used one or more sentences BEFORE any explanation appears.
 {judge_memory}
 LESSON:
 <<<
@@ -162,24 +173,37 @@ You are role-playing a real learner. Stay in character. You return only JSON."""
 LEARNER_USER = """\
 You are Ravi, 18, from a small town in Uttar Pradesh. You passed 12th from a Hindi-medium school.
 You read English slowly and know only common everyday words. You have never studied AI or coding.
+You are reading this lesson BECAUSE you want to learn these new words. A new word is NOT a problem
+if the lesson explains it in simple words in the same sentence or the next two sentences
+(for example: "This is called hallucination." right after the idea was described).
 
-Read this lesson carefully, the way Ravi would. Be honest: Ravi does not pretend to understand.
-List every sentence where Ravi would get stuck because of a word he does not know, an idea that
-was not explained, or a step that was skipped.
+Read the lesson top to bottom, the way Ravi would. Ignore headings and the title.
+Report a problem ONLY when one of these is true:
+  1. A word or idea is used WITHOUT a simple explanation before it or right after it.
+  2. The explanation itself uses words Ravi does not know, so it does not help.
+  3. A step is skipped, so Ravi cannot see how one idea leads to the next.
 
 Mark each problem:
-- "blocking": Ravi cannot follow the main idea after this point.
-- "minor": Ravi is slowed down but still gets the main idea.
+- "blocking": because of this sentence Ravi CANNOT answer Q1, Q2 or Q3 below (what RAG is, why we
+  need it, what happens when a user asks). Use "blocking" only then.
+- "minor": Ravi is slowed down or curious about a deeper detail (for example the math behind it),
+  but he can still answer Q1, Q2 and Q3.
+Copy the quote EXACTLY from the lesson.
 {judge_memory}
 LESSON:
 <<<
 {lesson}
 >>>
 
+Then answer these three questions as Ravi, in your own simple words, using only the lesson:
+  Q1. What is RAG?   Q2. Why do we need it?   Q3. What happens when a user asks a question?
+
 Return JSON:
 {{"confusions": [{{"quote": "exact sentence", "why": "why Ravi is stuck", "severity": "blocking|minor"}}],
+  "answers": {{"Q1": "...", "Q2": "...", "Q3": "..."}},
   "ravi_explains_it": "2-3 sentences: how Ravi would explain the topic to a friend after reading",
-  "understood_main_idea": true}}"""
+  "understood_main_idea": true}}
+Be consistent: if you can answer Q1, Q2 and Q3 correctly from the lesson, nothing is "blocking"."""
 
 DISTILL_SYSTEM = "You improve writing instructions for an AI lesson writer. You return only JSON."
 
